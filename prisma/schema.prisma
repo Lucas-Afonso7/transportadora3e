@@ -18,11 +18,17 @@ model Client {
   phone        String
   email        String?
   passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Bloqueio temporário após tentativas de login inválidas seguidas
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   services Service[]
   payments Payment[]
+  sessions Session[]
 
   @@map("clients")
 }
@@ -32,12 +38,40 @@ model Admin {
   username     String   @unique
   name         String
   passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
 
-  reviewedPayments Payment[]   @relation("PaymentReviewedBy")
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  reviewedPayments Payment[]  @relation("PaymentReviewedBy")
   auditLogs        AuditLog[]
+  sessions         Session[]
 
   @@map("admins")
+}
+
+// Sessão de login. Guardamos só o hash do token (nunca o token em si),
+// igual senha, pra um vazamento do banco não virar sequestro de sessão
+// direto. O cookie guarda o token em texto puro; o servidor compara o hash.
+model Session {
+  id        Int       @id @default(autoincrement())
+  tokenHash String    @unique @map("token_hash")
+  actorType ActorType @map("actor_type")
+
+  clientId Int? @map("client_id")
+  adminId  Int? @map("admin_id")
+
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  client Client? @relation(fields: [clientId], references: [id])
+  admin  Admin?  @relation(fields: [adminId], references: [id])
+
+  @@index([clientId])
+  @@index([adminId])
+  @@index([expiresAt])
+  @@map("sessions")
 }
 
 // Dados do Evaldo mostrados ao cliente na hora de pagar (chave PIX, WhatsApp).
