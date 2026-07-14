@@ -1,0 +1,158 @@
+datasource db {
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// ---------------------------------------------------------------------------
+// Pessoas / acesso
+// ---------------------------------------------------------------------------
+
+model Client {
+  id           Int      @id @default(autoincrement())
+  docNumber    String   @unique @map("doc_number") // CPF ou CNPJ, usado como login
+  name         String
+  phone        String
+  email        String?
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  services Service[]
+  payments Payment[]
+
+  @@map("clients")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  name         String
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  reviewedPayments Payment[]   @relation("PaymentReviewedBy")
+  auditLogs        AuditLog[]
+
+  @@map("admins")
+}
+
+// Dados do Evaldo mostrados ao cliente na hora de pagar (chave PIX, WhatsApp).
+// Fica em tabela em vez de hardcoded no front, para poder editar via admin.
+model BusinessProfile {
+  id            Int      @id @default(autoincrement())
+  businessName  String   @map("business_name")
+  pixKey        String   @map("pix_key")
+  whatsappPhone String   @map("whatsapp_phone")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("business_profile")
+}
+
+// ---------------------------------------------------------------------------
+// Serviços e pagamentos
+// ---------------------------------------------------------------------------
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  clientId    Int      @map("client_id")
+  description String
+  totalAmount Decimal  @map("total_amount") @db.Decimal(10, 2)
+  serviceDate DateTime @map("service_date") @db.Date
+  dueDate     DateTime? @map("due_date") @db.Date
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  client   Client    @relation(fields: [clientId], references: [id])
+  payments Payment[]
+
+  @@index([clientId])
+  @@map("services")
+}
+
+enum PaymentMethod {
+  PIX
+  DINHEIRO
+}
+
+enum PaymentStatus {
+  AGUARDANDO_VALIDACAO
+  APROVADO
+  REJEITADO
+}
+
+model Payment {
+  id         Int           @id @default(autoincrement())
+  serviceId  Int           @map("service_id")
+  clientId   Int           @map("client_id") // denormalizado: toda query de isolamento por cliente filtra direto aqui, sem join
+  amount     Decimal       @db.Decimal(10, 2)
+  method     PaymentMethod
+  status     PaymentStatus @default(AGUARDANDO_VALIDACAO)
+  createdAt  DateTime      @default(now()) @map("created_at")
+
+  reviewedByAdminId Int?      @map("reviewed_by_admin_id")
+  reviewedAt        DateTime? @map("reviewed_at")
+  rejectionReason   String?   @map("rejection_reason")
+
+  service         Service          @relation(fields: [serviceId], references: [id])
+  client          Client           @relation(fields: [clientId], references: [id])
+  reviewedByAdmin Admin?           @relation("PaymentReviewedBy", fields: [reviewedByAdminId], references: [id])
+  proof           PaymentProof?
+  auditLogs       AuditLog[]
+
+  @@index([serviceId])
+  @@index([clientId])
+  @@index([status])
+  @@map("payments")
+}
+
+model PaymentProof {
+  id               Int      @id @default(autoincrement())
+  paymentId        Int      @unique @map("payment_id")
+  filePath         String   @map("file_path")
+  originalFileName String   @map("original_file_name")
+  mimeType         String   @map("mime_type")
+  fileSizeBytes    Int      @map("file_size_bytes")
+  uploadedAt       DateTime @default(now()) @map("uploaded_at")
+
+  payment Payment @relation(fields: [paymentId], references: [id])
+
+  @@map("payment_proofs")
+}
+
+// ---------------------------------------------------------------------------
+// Auditoria
+// ---------------------------------------------------------------------------
+
+enum ActorType {
+  CLIENT
+  ADMIN
+}
+
+enum AuditAction {
+  CRIADO
+  APROVADO
+  REJEITADO
+  REENVIADO
+}
+
+model AuditLog {
+  id            Int           @id @default(autoincrement())
+  paymentId     Int           @map("payment_id")
+  actorType     ActorType     @map("actor_type")
+  actorAdminId  Int?          @map("actor_admin_id")
+  action        AuditAction
+  statusBefore  PaymentStatus? @map("status_before")
+  statusAfter   PaymentStatus  @map("status_after")
+  amountBefore  Decimal?      @db.Decimal(10, 2) @map("amount_before")
+  amountAfter   Decimal       @db.Decimal(10, 2) @map("amount_after")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  payment    Payment @relation(fields: [paymentId], references: [id])
+  actorAdmin Admin?  @relation(fields: [actorAdminId], references: [id])
+
+  @@index([paymentId])
+  @@map("audit_logs")
+}
