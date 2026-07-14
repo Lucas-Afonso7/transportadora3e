@@ -21,10 +21,6 @@ export function PaymentHistoryItem({
           </p>
           <p className="mt-0.5 text-sm text-ink-500">
             {formatDate(payment.createdAt)} · {METHOD_LABEL[payment.method]}
-            {payment.method === "PIX" &&
-              (payment.hasProof
-                ? " · comprovante enviado"
-                : " · sem comprovante")}
           </p>
         </div>
         <PaymentStatusBadge status={payment.status} />
@@ -36,6 +32,17 @@ export function PaymentHistoryItem({
           {formatBRL(payment.amount)}
         </span>
       </div>
+
+      {payment.proofId && (
+        <a
+          href={`/api/comprovantes/${payment.proofId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
+        >
+          Ver comprovante enviado
+        </a>
+      )}
 
       {payment.status === "REJEITADO" && payment.rejectionReason && (
         <p className="mt-3 rounded-control bg-danger-50 px-3 py-2 text-xs text-danger-700">

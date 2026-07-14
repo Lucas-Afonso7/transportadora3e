@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { formatBRL, formatDate } from "@/lib/format";
 import type { ClientServiceSummary } from "@/lib/data/client-dashboard";
 import { ServiceStatusBadge } from "./StatusBadge";
 
 export function ServiceCard({ service }: { service: ClientServiceSummary }) {
   const hasPendingValidation = Number(service.pendingValidationAmount) > 0;
+  const canPay = service.status !== "PAGO";
 
   return (
     <div className="rounded-card border border-ink-200 bg-white p-4 shadow-card">
@@ -47,6 +49,15 @@ export function ServiceCard({ service }: { service: ClientServiceSummary }) {
           {formatBRL(service.pendingValidationAmount)} aguardando validação do
           comprovante
         </p>
+      )}
+
+      {canPay && (
+        <Link
+          href={`/painel/servicos/${service.id}`}
+          className="mt-3 block rounded-control bg-brand-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-brand-700"
+        >
+          Pagar
+        </Link>
       )}
     </div>
   );

@@ -9,8 +9,13 @@ import { SummaryStat } from "@/components/dashboard/SummaryStat";
 import { ServiceCard } from "@/components/dashboard/ServiceCard";
 import { PaymentHistoryItem } from "@/components/dashboard/PaymentHistoryItem";
 
-export default async function PainelPage() {
+export default async function PainelPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ pagamento?: string }>;
+}) {
   const client = await requireClientSession();
+  const { pagamento } = await searchParams;
 
   // clientId vem só da sessão validada no servidor — nunca de query param
   // ou body enviado pelo navegador, então um cliente não tem como pedir
@@ -31,6 +36,13 @@ export default async function PainelPage() {
           Aqui estão seus serviços e pagamentos com a Transportadora 3E.
         </p>
       </div>
+
+      {pagamento === "enviado" && (
+        <p className="rounded-control bg-brand-100 px-4 py-3 text-sm font-medium text-brand-700">
+          Pagamento enviado! Assim que o Evaldo confirmar, o status aqui é
+          atualizado.
+        </p>
+      )}
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <SummaryStat label="Total devido" value={formatBRL(totals.totalDevido)} />

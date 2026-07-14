@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
+import { sumByStatus, computeRemainingAmount } from "@/lib/payments";
 
 export type ServiceStatus = "PENDENTE" | "PARCIAL" | "PAGO";
 
@@ -16,18 +17,6 @@ export type ClientServiceSummary = {
   pendingValidationAmount: string;
   status: ServiceStatus;
 };
-
-// Soma valores só de pagamentos APROVADO — dinheiro "aguardando validação"
-// nunca conta como pago. É a mesma regra usada em toda a área do cliente e
-// vai ser reaproveitada na visão financeira do admin (Etapa 7).
-function sumByStatus(
-  payments: { amount: Prisma.Decimal; status: string }[],
-  status: string,
-): Prisma.Decimal {
-  return payments
-    .filter((p) => p.status === status)
-    .reduce((acc, p) => acc.plus(p.amount), new Prisma.Decimal(0));
-}
 
 export async function getClientServiceSummaries(
   clientId: number,
@@ -46,9 +35,9 @@ export async function getClientServiceSummaries(
       service.payments,
       "AGUARDANDO_VALIDACAO",
     );
-    const remainingAmount = Prisma.Decimal.max(
-      service.totalAmount.minus(paidAmount),
-      new Prisma.Decimal(0),
+    const remainingAmount = computeRemainingAmount(
+      service.totalAmount,
+      service.payments,
     );
 
     const status: ServiceStatus = paidAmount.gte(service.totalAmount)
@@ -80,7 +69,7 @@ export type ClientPaymentHistoryItem = {
   createdAt: Date;
   reviewedAt: Date | null;
   rejectionReason: string | null;
-  hasProof: boolean;
+  proofId: number | null;
 };
 
 export async function getClientPaymentHistory(
@@ -104,7 +93,7 @@ export async function getClientPaymentHistory(
     createdAt: payment.createdAt,
     reviewedAt: payment.reviewedAt,
     rejectionReason: payment.rejectionReason,
-    hasProof: payment.proof !== null,
+    proofId: payment.proof?.id ?? null,
   }));
 }
 

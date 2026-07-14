@@ -42,3 +42,6 @@ next-env.d.ts
 
 # prisma generated client
 /src/generated/
+
+# comprovantes enviados por clientes (dados reais de pagamento)
+/storage/
