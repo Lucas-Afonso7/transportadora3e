@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { submitPaymentAction, type PaymentFormState } from "./actions";
 import { formatBRL } from "@/lib/format";
+import { MAX_PROOF_SIZE_BYTES } from "@/lib/uploads";
 
 type Method = "PIX" | "DINHEIRO";
 
@@ -24,6 +25,7 @@ export function PaymentForm({
   const [method, setMethod] = useState<Method>("PIX");
   const [copied, setCopied] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [fileTooLarge, setFileTooLarge] = useState(false);
 
   const whatsappLink = `https://wa.me/${businessProfile.whatsappPhone}`;
 
@@ -160,12 +162,28 @@ export function PaymentForm({
                 type="file"
                 accept="image/jpeg,image/png,image/webp,application/pdf"
                 required
-                onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  setFileName(file?.name ?? null);
+                  // Checa o tamanho já no navegador: sem isso, um arquivo
+                  // grande demais só falharia lá no servidor (limite do
+                  // Next pra Server Actions), e o erro que aparece pro
+                  // cliente é um genérico "falha de conexão" em vez de uma
+                  // mensagem que explica o que fazer.
+                  setFileTooLarge(
+                    file !== null && file.size > MAX_PROOF_SIZE_BYTES,
+                  );
+                }}
                 className="block w-full text-sm text-ink-600 file:mr-3 file:rounded-control file:border-0 file:bg-brand-600 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-700"
               />
-              {fileName && (
+              {fileName && !fileTooLarge && (
                 <p className="mt-1 text-xs text-ink-500">
                   Selecionado: {fileName}
+                </p>
+              )}
+              {fileTooLarge && (
+                <p className="mt-1 text-xs font-medium text-danger-700">
+                  {fileName} passa de 8MB. Escolha um arquivo menor.
                 </p>
               )}
               <p className="mt-1 text-xs text-ink-500">
@@ -200,7 +218,7 @@ export function PaymentForm({
 
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || (method === "PIX" && fileTooLarge)}
           className="w-full rounded-control bg-brand-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-brand-700 disabled:opacity-60"
         >
           {isPending
