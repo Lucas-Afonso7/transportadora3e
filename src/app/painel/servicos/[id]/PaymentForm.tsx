@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { submitPaymentAction, type PaymentFormState } from "./actions";
 import { formatBRL } from "@/lib/format";
@@ -131,6 +132,19 @@ export function PaymentForm({
                   {copied ? "Copiado" : "Copiar"}
                 </button>
               </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-1.5 py-1">
+              <Image
+                src="/pix-qrcode-placeholder.png"
+                alt="QR Code Pix"
+                width={140}
+                height={140}
+                className="rounded-control border border-ink-200"
+              />
+              <p className="text-center text-xs text-ink-400">
+                QR ilustrativo — use a chave Pix acima para pagar
+              </p>
             </div>
 
             <div>

@@ -1,4 +1,4 @@
-import { formatBRL, formatDate } from "@/lib/format";
+import { formatBRL, formatDateTime } from "@/lib/format";
 import type { ClientPaymentHistoryItem } from "@/lib/data/client-dashboard";
 import { PaymentStatusBadge } from "./StatusBadge";
 
@@ -20,7 +20,7 @@ export function PaymentHistoryItem({
             {payment.serviceDescription}
           </p>
           <p className="mt-0.5 text-sm text-ink-500">
-            {formatDate(payment.createdAt)} · {METHOD_LABEL[payment.method]}
+            {formatDateTime(payment.createdAt)} · {METHOD_LABEL[payment.method]}
           </p>
         </div>
         <PaymentStatusBadge status={payment.status} />

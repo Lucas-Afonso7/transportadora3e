@@ -1,4 +1,4 @@
-import { formatBRL, formatDate } from "@/lib/format";
+import { formatBRL, formatDateTime } from "@/lib/format";
 import type { ReviewQueueItem as ReviewQueueItemType } from "@/lib/data/admin-review-queue";
 import { approvePaymentAction } from "@/app/admin/(protegido)/actions";
 import { RejectButton } from "./RejectButton";
@@ -19,7 +19,7 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
           <p className="text-xs text-ink-500">{item.clientDocNumber}</p>
         </div>
         <span className="text-xs text-ink-500">
-          {formatDate(item.createdAt)}
+          {formatDateTime(item.createdAt)}
         </span>
       </div>
 
