@@ -44,17 +44,17 @@ export function PaymentForm({
     <div>
       <Link
         href="/painel"
-        className="mb-4 inline-block text-sm text-ink-500 hover:text-ink-900"
+        className="mb-4 inline-block text-sm text-fg-muted hover:text-fg"
       >
         ← Voltar
       </Link>
 
-      <div className="rounded-card border border-ink-200 bg-white p-4 shadow-card">
-        <p className="text-sm text-ink-500">{service.description}</p>
-        <p className="mt-1 text-2xl font-semibold text-ink-900">
+      <div className="rounded-card border border-border bg-surface p-4 shadow-card">
+        <p className="text-sm text-fg-muted">{service.description}</p>
+        <p className="mt-1 text-2xl font-semibold text-fg">
           {formatBRL(service.remainingAmount)}
         </p>
-        <p className="text-sm text-ink-500">falta pagar</p>
+        <p className="text-sm text-fg-muted">falta pagar</p>
       </div>
 
       <form action={formAction} className="mt-4 space-y-4">
@@ -64,7 +64,7 @@ export function PaymentForm({
         <div>
           <label
             htmlFor="amount"
-            className="mb-1.5 block text-sm font-medium text-ink-700"
+            className="mb-1.5 block text-sm font-medium text-fg-muted"
           >
             Valor que deseja pagar
           </label>
@@ -78,16 +78,16 @@ export function PaymentForm({
             max={service.remainingAmount}
             defaultValue={service.remainingAmount}
             required
-            className="w-full rounded-control border border-ink-300 px-3 py-2.5 text-lg text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-lg text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
           />
-          <p className="mt-1 text-xs text-ink-500">
+          <p className="mt-1 text-xs text-fg-muted">
             Pode ser o valor total ou parcial — até{" "}
             {formatBRL(service.remainingAmount)}.
           </p>
         </div>
 
         <div>
-          <p className="mb-1.5 text-sm font-medium text-ink-700">
+          <p className="mb-1.5 text-sm font-medium text-fg-muted">
             Forma de pagamento
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -96,8 +96,8 @@ export function PaymentForm({
               onClick={() => setMethod("PIX")}
               className={`rounded-control border px-4 py-2.5 text-sm font-medium transition-colors ${
                 method === "PIX"
-                  ? "border-brand-600 bg-brand-50 text-brand-700"
-                  : "border-ink-300 text-ink-600 hover:border-ink-400"
+                  ? "border-brand-600 bg-brand-tint text-brand-tint-fg"
+                  : "border-border text-fg-muted hover:border-fg-subtle"
               }`}
             >
               Pix
@@ -107,8 +107,8 @@ export function PaymentForm({
               onClick={() => setMethod("DINHEIRO")}
               className={`rounded-control border px-4 py-2.5 text-sm font-medium transition-colors ${
                 method === "DINHEIRO"
-                  ? "border-brand-600 bg-brand-50 text-brand-700"
-                  : "border-ink-300 text-ink-600 hover:border-ink-400"
+                  ? "border-brand-600 bg-brand-tint text-brand-tint-fg"
+                  : "border-border text-fg-muted hover:border-fg-subtle"
               }`}
             >
               Dinheiro
@@ -117,19 +117,19 @@ export function PaymentForm({
         </div>
 
         {method === "PIX" ? (
-          <div className="space-y-3 rounded-card border border-ink-200 bg-ink-50 p-4">
+          <div className="space-y-3 rounded-card border border-border bg-page p-4">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-ink-500">
+              <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">
                 Chave Pix
               </p>
               <div className="mt-1 flex items-center justify-between gap-2">
-                <span className="break-all text-sm font-medium text-ink-900">
+                <span className="break-all text-sm font-medium text-fg">
                   {businessProfile.pixKey}
                 </span>
                 <button
                   type="button"
                   onClick={copyPixKey}
-                  className="shrink-0 rounded-control border border-ink-300 bg-white px-2.5 py-1 text-xs font-medium text-ink-700 hover:border-ink-400"
+                  className="shrink-0 rounded-control border border-border bg-surface px-2.5 py-1 text-xs font-medium text-fg-muted hover:border-fg-subtle"
                 >
                   {copied ? "Copiado" : "Copiar"}
                 </button>
@@ -142,9 +142,9 @@ export function PaymentForm({
                 alt="QR Code Pix"
                 width={140}
                 height={140}
-                className="rounded-control border border-ink-200"
+                className="rounded-control border border-border"
               />
-              <p className="text-center text-xs text-ink-400">
+              <p className="text-center text-xs text-fg-subtle">
                 QR ilustrativo — use a chave Pix acima para pagar
               </p>
             </div>
@@ -152,7 +152,7 @@ export function PaymentForm({
             <div>
               <label
                 htmlFor="comprovante"
-                className="mb-1.5 block text-sm font-medium text-ink-700"
+                className="mb-1.5 block text-sm font-medium text-fg-muted"
               >
                 Anexar comprovante
               </label>
@@ -174,26 +174,26 @@ export function PaymentForm({
                     file !== null && file.size > MAX_PROOF_SIZE_BYTES,
                   );
                 }}
-                className="block w-full text-sm text-ink-600 file:mr-3 file:rounded-control file:border-0 file:bg-brand-600 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-700"
+                className="block w-full text-sm text-fg-muted file:mr-3 file:rounded-control file:border-0 file:bg-brand-600 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-brand-700"
               />
               {fileName && !fileTooLarge && (
-                <p className="mt-1 text-xs text-ink-500">
+                <p className="mt-1 text-xs text-fg-muted">
                   Selecionado: {fileName}
                 </p>
               )}
               {fileTooLarge && (
-                <p className="mt-1 text-xs font-medium text-danger-700">
+                <p className="mt-1 text-xs font-medium text-danger-tint-fg">
                   {fileName} passa de 8MB. Escolha um arquivo menor.
                 </p>
               )}
-              <p className="mt-1 text-xs text-ink-500">
+              <p className="mt-1 text-xs text-fg-muted">
                 Imagem (JPG/PNG/WEBP) ou PDF, até 8MB.
               </p>
             </div>
           </div>
         ) : (
-          <div className="space-y-3 rounded-card border border-ink-200 bg-ink-50 p-4">
-            <p className="text-sm text-ink-700">
+          <div className="space-y-3 rounded-card border border-border bg-page p-4">
+            <p className="text-sm text-fg-muted">
               Combine o pagamento em dinheiro direto com a Transportadora 3E
               pelo WhatsApp. Ao confirmar aqui, esse pagamento entra como{" "}
               <strong>aguardando validação</strong> até o recebimento ser
@@ -211,7 +211,7 @@ export function PaymentForm({
         )}
 
         {state.error && (
-          <p className="rounded-control bg-danger-50 px-3 py-2 text-sm text-danger-700">
+          <p className="rounded-control bg-danger-tint px-3 py-2 text-sm text-danger-tint-fg">
             {state.error}
           </p>
         )}

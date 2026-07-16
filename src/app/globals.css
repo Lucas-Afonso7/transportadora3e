@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Alterna o dark: por classe (.dark no <html>) em vez de só seguir o SO —
+   assim o cliente pode escolher o tema manualmente (ThemeToggle) e a
+   escolha fica salva, independente da preferência do sistema. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Neutros — grafite levemente frio, não o cinza "SaaS" azulado padrão */
   --color-ink-50: #f7f7f7;
@@ -39,14 +44,53 @@
   --color-info-500: #33507a;
   --color-info-700: #23385a;
 
-  --background: var(--color-ink-50);
-  --foreground: var(--color-ink-900);
+  /* Superfícies semânticas — cada componente usa bg-page/bg-surface/
+     text-fg/etc. em vez de ink-50/white/ink-900 direto, então o tema
+     escuro é um redefine desses nomes aqui embaixo, não um dark: em
+     cada classe espalhada pelo app. */
+  --color-page: var(--color-ink-50);
+  --color-surface: #ffffff;
+  --color-surface-hover: var(--color-ink-100);
+  --color-border: var(--color-ink-200);
+  --color-border-muted: var(--color-ink-100);
+  --color-fg: var(--color-ink-900);
+  --color-fg-muted: var(--color-ink-500);
+  --color-fg-subtle: var(--color-ink-400);
+
+  /* Fundos "tingidos" (badges, banners) — em modo claro são um tom bem
+     clarinho da cor; em escuro precisam ser um tom bem escuro da mesma
+     cor, senão ficam quase brancos sobre fundo escuro. */
+  --color-brand-tint: var(--color-brand-100);
+  --color-brand-tint-fg: var(--color-brand-700);
+  --color-warning-tint: var(--color-warning-50);
+  --color-warning-tint-fg: var(--color-warning-700);
+  --color-danger-tint: var(--color-danger-50);
+  --color-danger-tint-fg: var(--color-danger-700);
+  --color-info-tint: var(--color-info-50);
+  --color-info-tint-fg: var(--color-info-700);
+}
+
+.dark {
+  --color-page: var(--color-ink-950);
+  --color-surface: var(--color-ink-900);
+  --color-surface-hover: var(--color-ink-800);
+  --color-border: var(--color-ink-700);
+  --color-border-muted: var(--color-ink-800);
+  --color-fg: var(--color-ink-50);
+  --color-fg-muted: var(--color-ink-400);
+  --color-fg-subtle: var(--color-ink-500);
+
+  --color-brand-tint: #10402f;
+  --color-brand-tint-fg: #86cba7;
+  --color-warning-tint: #4a2c05;
+  --color-warning-tint-fg: #f0b968;
+  --color-danger-tint: #451512;
+  --color-danger-tint-fg: #f2a39c;
+  --color-info-tint: #1c2c48;
+  --color-info-tint-fg: #a9bfe0;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
   --color-ink-50: var(--color-ink-50);
   --color-ink-100: var(--color-ink-100);
   --color-ink-200: var(--color-ink-200);
@@ -82,6 +126,24 @@
   --color-info-500: var(--color-info-500);
   --color-info-700: var(--color-info-700);
 
+  --color-page: var(--color-page);
+  --color-surface: var(--color-surface);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-border: var(--color-border);
+  --color-border-muted: var(--color-border-muted);
+  --color-fg: var(--color-fg);
+  --color-fg-muted: var(--color-fg-muted);
+  --color-fg-subtle: var(--color-fg-subtle);
+
+  --color-brand-tint: var(--color-brand-tint);
+  --color-brand-tint-fg: var(--color-brand-tint-fg);
+  --color-warning-tint: var(--color-warning-tint);
+  --color-warning-tint-fg: var(--color-warning-tint-fg);
+  --color-danger-tint: var(--color-danger-tint);
+  --color-danger-tint-fg: var(--color-danger-tint-fg);
+  --color-info-tint: var(--color-info-tint);
+  --color-info-tint-fg: var(--color-info-tint-fg);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
@@ -93,14 +155,7 @@
   --shadow-card: 0 1px 2px rgba(11, 13, 15, 0.04), 0 1px 12px rgba(11, 13, 15, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--color-ink-950);
-    --foreground: var(--color-ink-100);
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-page);
+  color: var(--color-fg);
 }

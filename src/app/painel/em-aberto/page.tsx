@@ -33,8 +33,8 @@ export default async function EmAbertoPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-ink-900">Em Aberto</h1>
-      <p className="mt-1 text-sm text-ink-500">
+      <h1 className="text-2xl font-bold text-fg">Em Aberto</h1>
+      <p className="mt-1 text-sm text-fg-muted">
         {filtro && FILTER_LABEL[filtro]
           ? `Filtrando por: ${FILTER_LABEL[filtro]}`
           : "Serviços que ainda faltam pagar, total ou parcialmente."}

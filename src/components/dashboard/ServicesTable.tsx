@@ -11,14 +11,14 @@ export function ServicesTable({
   emptyMessage?: string;
 }) {
   if (services.length === 0) {
-    return <p className="text-sm text-ink-500">{emptyMessage}</p>;
+    return <p className="text-sm text-fg-muted">{emptyMessage}</p>;
   }
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
+      <div className="overflow-x-auto rounded-card border border-border bg-surface shadow-card">
         <table className="w-full min-w-[620px] text-left text-sm">
-          <thead className="border-b border-ink-100 text-ink-500">
+          <thead className="border-b border-border-muted text-fg-muted">
             <tr>
               <th className="px-4 py-3 font-medium">Data</th>
               <th className="px-4 py-3 font-medium">Descrição</th>
@@ -27,13 +27,13 @@ export function ServicesTable({
               <th className="px-4 py-3 font-medium">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink-100">
+          <tbody className="divide-y divide-border-muted">
             {services.map((service) => (
               <tr key={service.id}>
-                <td className="px-4 py-3 text-ink-600">
+                <td className="px-4 py-3 text-fg-muted">
                   {formatDate(service.serviceDate)}
                 </td>
-                <td className="px-4 py-3 text-ink-900">
+                <td className="px-4 py-3 text-fg">
                   {service.description}
                 </td>
                 <td className="px-4 py-3">
@@ -48,13 +48,13 @@ export function ServicesTable({
                     )}
                     <Link
                       href={`/painel/servicos/${service.id}/detalhes`}
-                      className="inline-block rounded-control border border-ink-300 px-3 py-1.5 text-xs font-medium text-ink-600 hover:border-ink-400"
+                      className="inline-block rounded-control border border-border px-3 py-1.5 text-xs font-medium text-fg-muted hover:border-fg-subtle"
                     >
                       Detalhes
                     </Link>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right font-medium text-ink-900">
+                <td className="px-4 py-3 text-right font-medium text-fg">
                   {formatBRL(service.totalAmount)}
                 </td>
                 <td className="px-4 py-3">
@@ -67,7 +67,7 @@ export function ServicesTable({
       </div>
       {/* Pista de que dá pra arrastar a tabela — some em telas largas, onde
           tudo já cabe sem precisar rolar. */}
-      <p className="mt-1.5 text-xs text-ink-400 sm:hidden">
+      <p className="mt-1.5 text-xs text-fg-subtle sm:hidden">
         Arraste para o lado para ver valor e status →
       </p>
     </div>

@@ -16,19 +16,19 @@ export default async function ExtratoPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-ink-900">Extrato de Pagamentos</h1>
-      <p className="mt-1 text-sm text-ink-500">
+      <h1 className="text-2xl font-bold text-fg">Extrato de Pagamentos</h1>
+      <p className="mt-1 text-sm text-fg-muted">
         Pagamentos já confirmados pelo Evaldo.
       </p>
 
-      <div className="mt-6 overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
+      <div className="mt-6 overflow-x-auto rounded-card border border-border bg-surface shadow-card">
         {pagos.length === 0 ? (
-          <p className="p-4 text-sm text-ink-500">
+          <p className="p-4 text-sm text-fg-muted">
             Nenhum pagamento confirmado ainda.
           </p>
         ) : (
           <table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="border-b border-ink-100 text-ink-500">
+            <thead className="border-b border-border-muted text-fg-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Enviado em</th>
                 <th className="px-4 py-3 font-medium">Confirmado em</th>
@@ -37,27 +37,27 @@ export default async function ExtratoPage() {
                 <th className="px-4 py-3 font-medium"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-100">
+            <tbody className="divide-y divide-border-muted">
               {pagos.map((payment) => (
                 <tr key={payment.id}>
-                  <td className="px-4 py-3 text-ink-600">
+                  <td className="px-4 py-3 text-fg-muted">
                     {formatDateTime(payment.createdAt)}
                   </td>
-                  <td className="px-4 py-3 text-ink-600">
+                  <td className="px-4 py-3 text-fg-muted">
                     {payment.reviewedAt
                       ? formatDateTime(payment.reviewedAt)
                       : "—"}
                   </td>
-                  <td className="px-4 py-3 text-ink-900">
+                  <td className="px-4 py-3 text-fg">
                     {payment.serviceDescription}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-ink-900">
+                  <td className="px-4 py-3 text-right font-medium text-fg">
                     {formatBRL(payment.amount)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/painel/servicos/${payment.serviceId}/detalhes`}
-                      className="inline-block rounded-control border border-ink-300 px-3 py-1.5 text-xs font-medium text-ink-600 hover:border-ink-400"
+                      className="inline-block rounded-control border border-border px-3 py-1.5 text-xs font-medium text-fg-muted hover:border-fg-subtle"
                     >
                       Detalhes
                     </Link>
@@ -70,9 +70,9 @@ export default async function ExtratoPage() {
       </div>
 
       <div className="mt-4 text-right">
-        <p className="text-sm text-ink-500">
+        <p className="text-sm text-fg-muted">
           Total Pago:{" "}
-          <span className="text-lg font-semibold text-brand-700">
+          <span className="text-lg font-semibold text-brand-700 dark:text-brand-400">
             {formatBRL(totalPago)}
           </span>
         </p>

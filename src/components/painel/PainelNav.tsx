@@ -26,8 +26,8 @@ export function PainelNav() {
             href={link.href}
             className={`rounded-control px-3 py-1.5 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-brand-100 text-brand-700"
-                : "text-ink-600 hover:bg-ink-100 hover:text-ink-900"
+                ? "bg-brand-tint text-brand-tint-fg"
+                : "text-fg-muted hover:bg-surface-hover hover:text-fg"
             }`}
           >
             {link.label}

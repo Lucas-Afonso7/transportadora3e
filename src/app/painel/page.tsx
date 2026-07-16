@@ -42,24 +42,24 @@ export default async function PainelPage({
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-900">
+        <h1 className="text-2xl font-bold text-fg">
           Gestão de Pagamentos
         </h1>
-        <p className="mt-1 text-sm text-ink-500">
+        <p className="mt-1 text-sm text-fg-muted">
           Acompanhe seus serviços contratados e pagamentos com a
           Transportadora 3E.
         </p>
       </div>
 
       {pagamento === "enviado" && (
-        <p className="mb-6 rounded-control bg-brand-100 px-4 py-3 text-sm font-medium text-brand-700">
+        <p className="mb-6 rounded-control bg-brand-tint px-4 py-3 text-sm font-medium text-brand-tint-fg">
           Pagamento enviado! Assim que o Evaldo confirmar, o status aqui é
           atualizado.
         </p>
       )}
 
       {Number(totals.totalAguardandoValidacao) > 0 && (
-        <p className="mb-6 rounded-control bg-info-50 px-4 py-3 text-sm font-medium text-info-700">
+        <p className="mb-6 rounded-control bg-info-tint px-4 py-3 text-sm font-medium text-info-tint-fg">
           {formatBRL(totals.totalAguardandoValidacao)} aguardando validação
           do Evaldo.
         </p>
@@ -97,7 +97,7 @@ export default async function PainelPage({
       </div>
 
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-ink-900">
+        <h2 className="text-base font-semibold text-fg">
           Serviços em Aberto
         </h2>
         <Link

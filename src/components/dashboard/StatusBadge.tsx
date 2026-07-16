@@ -17,12 +17,12 @@ const PAYMENT_LABEL: Record<PaymentStatus, string> = {
 // pendente/parcial = aguardando, rejeitado = danger) — o cliente não deve
 // aprender dois vocabulários visuais diferentes pro mesmo conceito.
 const STYLE: Record<ServiceStatus | PaymentStatus, string> = {
-  PENDENTE: "bg-warning-50 text-warning-700",
-  PARCIAL: "bg-info-50 text-info-700",
-  PAGO: "bg-brand-100 text-brand-700",
-  AGUARDANDO_VALIDACAO: "bg-info-50 text-info-700",
-  APROVADO: "bg-brand-100 text-brand-700",
-  REJEITADO: "bg-danger-50 text-danger-700",
+  PENDENTE: "bg-warning-tint text-warning-tint-fg",
+  PARCIAL: "bg-info-tint text-info-tint-fg",
+  PAGO: "bg-brand-tint text-brand-tint-fg",
+  AGUARDANDO_VALIDACAO: "bg-info-tint text-info-tint-fg",
+  APROVADO: "bg-brand-tint text-brand-tint-fg",
+  REJEITADO: "bg-danger-tint text-danger-tint-fg",
 };
 
 export function ServiceStatusBadge({ status }: { status: ServiceStatus }) {
