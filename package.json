@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "db:backup": "powershell -ExecutionPolicy Bypass -File scripts/backup-database.ps1",
     "postinstall": "prisma generate"
   },
   "dependencies": {

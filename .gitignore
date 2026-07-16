@@ -45,3 +45,6 @@ next-env.d.ts
 
 # comprovantes enviados por clientes (dados reais de pagamento)
 /storage/
+
+# backups do banco (dados reais de clientes/pagamentos — nunca no git)
+/backups/
