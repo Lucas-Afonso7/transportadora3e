@@ -3,21 +3,21 @@ import { formatBRL, formatDate } from "@/lib/format";
 import type { ClientServiceSummary } from "@/lib/data/client-dashboard";
 import { ServiceStatusBadge } from "./StatusBadge";
 
-export function MovimentacoesTable({
+export function ServicesTable({
   services,
+  emptyMessage = "Nenhum serviço encontrado.",
 }: {
   services: ClientServiceSummary[];
+  emptyMessage?: string;
 }) {
   if (services.length === 0) {
-    return (
-      <p className="text-sm text-ink-500">Nenhuma movimentação encontrada.</p>
-    );
+    return <p className="text-sm text-ink-500">{emptyMessage}</p>;
   }
 
   return (
     <div>
       <div className="overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
-        <table className="w-full min-w-[560px] text-left text-sm">
+        <table className="w-full min-w-[620px] text-left text-sm">
           <thead className="border-b border-ink-100 text-ink-500">
             <tr>
               <th className="px-4 py-3 font-medium">Data</th>
@@ -37,14 +37,22 @@ export function MovimentacoesTable({
                   {service.description}
                 </td>
                 <td className="px-4 py-3">
-                  {service.status !== "PAGO" && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {service.status !== "PAGO" && (
+                      <Link
+                        href={`/painel/servicos/${service.id}`}
+                        className="inline-block rounded-control bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
+                      >
+                        Pagar
+                      </Link>
+                    )}
                     <Link
-                      href={`/painel/servicos/${service.id}`}
-                      className="inline-block rounded-control bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
+                      href={`/painel/servicos/${service.id}/detalhes`}
+                      className="inline-block rounded-control border border-ink-300 px-3 py-1.5 text-xs font-medium text-ink-600 hover:border-ink-400"
                     >
-                      Pagar
+                      Detalhes
                     </Link>
-                  )}
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-right font-medium text-ink-900">
                   {formatBRL(service.totalAmount)}

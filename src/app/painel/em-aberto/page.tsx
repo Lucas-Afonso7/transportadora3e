@@ -1,14 +1,14 @@
 import { requireClientSession } from "@/lib/auth/session";
 import { getClientServiceSummaries } from "@/lib/data/client-dashboard";
 import { categorizePainelService } from "@/lib/service-status";
-import { MovimentacoesTable } from "@/components/dashboard/MovimentacoesTable";
+import { ServicesTable } from "@/components/dashboard/ServicesTable";
 
 const FILTER_LABEL: Record<string, string> = {
   vencidos: "Vencidos",
   vencendo: "Vence em 7 dias",
 };
 
-export default async function MovimentacoesPage({
+export default async function EmAbertoPage({
   searchParams,
 }: {
   searchParams: Promise<{ filtro?: string }>;
@@ -18,26 +18,33 @@ export default async function MovimentacoesPage({
 
   const services = await getClientServiceSummaries(client.id);
 
+  // Pago só aparece no Extrato — uma vez quitado, não faz sentido continuar
+  // listado como "em aberto".
+  const emAberto = services.filter((s) => s.status !== "PAGO");
+
   const filtered =
     filtro === "vencidos"
-      ? services.filter((s) => categorizePainelService(s) === "VENCIDO")
+      ? emAberto.filter((s) => categorizePainelService(s) === "VENCIDO")
       : filtro === "vencendo"
-        ? services.filter(
+        ? emAberto.filter(
             (s) => categorizePainelService(s) === "VENCE_EM_7_DIAS",
           )
-        : services;
+        : emAberto;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-ink-900">Movimentações</h1>
+      <h1 className="text-2xl font-bold text-ink-900">Em Aberto</h1>
       <p className="mt-1 text-sm text-ink-500">
         {filtro && FILTER_LABEL[filtro]
           ? `Filtrando por: ${FILTER_LABEL[filtro]}`
-          : "Todos os serviços contratados."}
+          : "Serviços que ainda faltam pagar, total ou parcialmente."}
       </p>
 
       <div className="mt-6">
-        <MovimentacoesTable services={filtered} />
+        <ServicesTable
+          services={filtered}
+          emptyMessage="Nenhum serviço em aberto — tudo pago!"
+        />
       </div>
     </div>
   );

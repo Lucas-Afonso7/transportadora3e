@@ -26,6 +26,17 @@ export function formatDateTime(date: Date): string {
   return date.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
 }
 
+// Só o horário (HH:mm), mesmo fuso de formatDateTime — usado quando data e
+// hora aparecem em campos separados na tela (ex.: "dia que pagou" /
+// "horário que pagou").
+export function formatTime(date: Date): string {
+  return date.toLocaleTimeString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 // Espera o formato salvo em BusinessProfile.whatsappPhone: código do país +
 // DDD + número, só dígitos (ex.: "5531995094324"). Formata pra exibição
 // como "(31) 99509-4324"; se vier em outro formato, devolve como veio em

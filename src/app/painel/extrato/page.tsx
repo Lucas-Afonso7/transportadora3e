@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireClientSession } from "@/lib/auth/session";
 import { getClientPaymentHistory } from "@/lib/data/client-dashboard";
 import { formatBRL, formatDateTime } from "@/lib/format";
@@ -33,6 +34,7 @@ export default async function ExtratoPage() {
                 <th className="px-4 py-3 font-medium">Confirmado em</th>
                 <th className="px-4 py-3 font-medium">Descrição</th>
                 <th className="px-4 py-3 text-right font-medium">Valor</th>
+                <th className="px-4 py-3 font-medium"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-100">
@@ -51,6 +53,14 @@ export default async function ExtratoPage() {
                   </td>
                   <td className="px-4 py-3 text-right font-medium text-ink-900">
                     {formatBRL(payment.amount)}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/painel/servicos/${payment.serviceId}/detalhes`}
+                      className="inline-block rounded-control border border-ink-300 px-3 py-1.5 text-xs font-medium text-ink-600 hover:border-ink-400"
+                    >
+                      Detalhes
+                    </Link>
                   </td>
                 </tr>
               ))}
