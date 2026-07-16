@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/auth/password";
 import { createClientSession } from "@/lib/auth/session";
 import { isLockedOut, nextLockState } from "@/lib/auth/lockout";
+import { isRateLimited, getRequestIp } from "@/lib/auth/rate-limit";
 import type { LoginFormState } from "@/lib/auth/form-state";
 
 const loginSchema = z.object({
@@ -19,11 +20,18 @@ const loginSchema = z.object({
 const INVALID_CREDENTIALS_MESSAGE = "CPF/CNPJ ou senha inválidos.";
 const LOCKED_MESSAGE =
   "Conta temporariamente bloqueada por várias tentativas inválidas. Tente novamente em alguns minutos.";
+const RATE_LIMITED_MESSAGE =
+  "Muitas tentativas de login. Tente novamente em alguns minutos.";
 
 export async function clientLoginAction(
   _prevState: LoginFormState,
   formData: FormData,
 ): Promise<LoginFormState> {
+  const ip = await getRequestIp();
+  if (isRateLimited(`client:${ip}`)) {
+    return { error: RATE_LIMITED_MESSAGE };
+  }
+
   const parsed = loginSchema.safeParse({
     docNumber: formData.get("docNumber"),
     password: formData.get("password"),
