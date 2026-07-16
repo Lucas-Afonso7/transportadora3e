@@ -13,7 +13,10 @@ export function PainelNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-1">
+    // overflow-x-auto: se um item novo for adicionado no futuro e não
+    // couber em telas pequenas, o menu vira carrossel horizontal em vez de
+    // estourar a largura da página inteira.
+    <nav className="flex items-center gap-1 overflow-x-auto">
       {LINKS.map((link) => {
         const isActive =
           link.href === "/painel"
@@ -24,7 +27,7 @@ export function PainelNav() {
           <Link
             key={link.href}
             href={link.href}
-            className={`rounded-control px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap rounded-control px-3 py-1.5 text-sm font-medium transition-colors ${
               isActive
                 ? "bg-brand-tint text-brand-tint-fg"
                 : "text-fg-muted hover:bg-surface-hover hover:text-fg"

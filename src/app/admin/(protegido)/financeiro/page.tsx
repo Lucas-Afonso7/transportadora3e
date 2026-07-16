@@ -59,20 +59,27 @@ export default async function FinanceiroPage() {
           Nenhum cliente com serviços cadastrados ainda.
         </p>
       ) : (
+        <div>
         <div className="overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead className="border-b border-ink-100 text-ink-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Cliente</th>
-                <th className="px-4 py-3 text-right font-medium">Contratado</th>
-                <th className="px-4 py-3 text-right font-medium">Recebido</th>
-                <th className="px-4 py-3 text-right font-medium">Em aberto</th>
+                <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                  Contratado
+                </th>
+                <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                  Recebido
+                </th>
+                <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                  Em aberto
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-100">
               {porCliente.map((row) => (
                 <tr key={row.clientId} className="hover:bg-ink-50">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 whitespace-nowrap">
                     <Link
                       href={`/admin/clientes/${row.clientId}`}
                       className="font-medium text-brand-700 hover:underline"
@@ -80,19 +87,23 @@ export default async function FinanceiroPage() {
                       {row.clientName}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-right text-ink-900">
+                  <td className="px-4 py-3 text-right whitespace-nowrap text-ink-900">
                     {formatBRL(row.totalContratado)}
                   </td>
-                  <td className="px-4 py-3 text-right text-brand-700">
+                  <td className="px-4 py-3 text-right whitespace-nowrap text-brand-700">
                     {formatBRL(row.totalPago)}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-warning-700">
+                  <td className="px-4 py-3 text-right whitespace-nowrap font-medium text-warning-700">
                     {formatBRL(row.totalPendente)}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <p className="mt-1.5 text-xs text-ink-400 sm:hidden">
+          Arraste para o lado para ver mais →
+        </p>
         </div>
       )}
     </div>

@@ -20,23 +20,27 @@ export function ServicesTable({
         <table className="w-full min-w-[620px] text-left text-sm">
           <thead className="border-b border-border-muted text-fg-muted">
             <tr>
-              <th className="px-4 py-3 font-medium">Data</th>
+              <th className="px-4 py-3 font-medium whitespace-nowrap">Data</th>
               <th className="px-4 py-3 font-medium">Descrição</th>
-              <th className="px-4 py-3 font-medium">Ação</th>
-              <th className="px-4 py-3 text-right font-medium">Valor</th>
-              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium whitespace-nowrap">Ação</th>
+              <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                Valor
+              </th>
+              <th className="px-4 py-3 font-medium whitespace-nowrap">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-muted">
             {services.map((service) => (
               <tr key={service.id}>
-                <td className="px-4 py-3 text-fg-muted">
+                <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
                   {formatDate(service.serviceDate)}
                 </td>
-                <td className="px-4 py-3 text-fg">
+                <td className="px-4 py-3 whitespace-nowrap text-fg">
                   {service.description}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <div className="flex flex-wrap gap-1.5">
                     {service.status !== "PAGO" && (
                       <Link
@@ -54,10 +58,10 @@ export function ServicesTable({
                     </Link>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right font-medium text-fg">
+                <td className="px-4 py-3 text-right font-medium whitespace-nowrap text-fg">
                   {formatBRL(service.totalAmount)}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <ServiceStatusBadge status={service.status} />
                 </td>
               </tr>

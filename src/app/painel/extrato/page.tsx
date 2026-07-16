@@ -21,51 +21,64 @@ export default async function ExtratoPage() {
         Pagamentos já confirmados pelo Evaldo.
       </p>
 
-      <div className="mt-6 overflow-x-auto rounded-card border border-border bg-surface shadow-card">
-        {pagos.length === 0 ? (
-          <p className="p-4 text-sm text-fg-muted">
-            Nenhum pagamento confirmado ainda.
-          </p>
-        ) : (
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="border-b border-border-muted text-fg-muted">
-              <tr>
-                <th className="px-4 py-3 font-medium">Enviado em</th>
-                <th className="px-4 py-3 font-medium">Confirmado em</th>
-                <th className="px-4 py-3 font-medium">Descrição</th>
-                <th className="px-4 py-3 text-right font-medium">Valor</th>
-                <th className="px-4 py-3 font-medium"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-muted">
-              {pagos.map((payment) => (
-                <tr key={payment.id}>
-                  <td className="px-4 py-3 text-fg-muted">
-                    {formatDateTime(payment.createdAt)}
-                  </td>
-                  <td className="px-4 py-3 text-fg-muted">
-                    {payment.reviewedAt
-                      ? formatDateTime(payment.reviewedAt)
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-3 text-fg">
-                    {payment.serviceDescription}
-                  </td>
-                  <td className="px-4 py-3 text-right font-medium text-fg">
-                    {formatBRL(payment.amount)}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/painel/servicos/${payment.serviceId}/detalhes`}
-                      className="inline-block rounded-control border border-border px-3 py-1.5 text-xs font-medium text-fg-muted hover:border-fg-subtle"
-                    >
-                      Detalhes
-                    </Link>
-                  </td>
+      <div>
+        <div className="mt-6 overflow-x-auto rounded-card border border-border bg-surface shadow-card">
+          {pagos.length === 0 ? (
+            <p className="p-4 text-sm text-fg-muted">
+              Nenhum pagamento confirmado ainda.
+            </p>
+          ) : (
+            <table className="w-full min-w-[680px] text-left text-sm">
+              <thead className="border-b border-border-muted text-fg-muted">
+                <tr>
+                  <th className="px-4 py-3 font-medium whitespace-nowrap">
+                    Enviado em
+                  </th>
+                  <th className="px-4 py-3 font-medium whitespace-nowrap">
+                    Confirmado em
+                  </th>
+                  <th className="px-4 py-3 font-medium">Descrição</th>
+                  <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                    Valor
+                  </th>
+                  <th className="px-4 py-3 font-medium"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border-muted">
+                {pagos.map((payment) => (
+                  <tr key={payment.id}>
+                    <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
+                      {formatDateTime(payment.createdAt)}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
+                      {payment.reviewedAt
+                        ? formatDateTime(payment.reviewedAt)
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-fg">
+                      {payment.serviceDescription}
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium whitespace-nowrap text-fg">
+                      {formatBRL(payment.amount)}
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <Link
+                        href={`/painel/servicos/${payment.serviceId}/detalhes`}
+                        className="inline-block rounded-control border border-border px-3 py-1.5 text-xs font-medium text-fg-muted hover:border-fg-subtle"
+                      >
+                        Detalhes
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        {pagos.length > 0 && (
+          <p className="mt-1.5 text-xs text-fg-subtle sm:hidden">
+            Arraste para o lado para ver mais →
+          </p>
         )}
       </div>
 

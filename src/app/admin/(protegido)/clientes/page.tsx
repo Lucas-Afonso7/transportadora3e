@@ -44,21 +44,30 @@ export default async function ClientesPage({
       {clients.length === 0 ? (
         <p className="text-sm text-ink-500">Nenhum cliente cadastrado ainda.</p>
       ) : (
+        <div>
         <div className="overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="border-b border-ink-100 text-ink-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Nome</th>
-                <th className="px-4 py-3 font-medium">CPF/CNPJ</th>
-                <th className="px-4 py-3 font-medium">Telefone</th>
-                <th className="px-4 py-3 text-right font-medium">Contratado</th>
-                <th className="px-4 py-3 text-right font-medium">Em aberto</th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">
+                  CPF/CNPJ
+                </th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">
+                  Telefone
+                </th>
+                <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                  Contratado
+                </th>
+                <th className="px-4 py-3 text-right font-medium whitespace-nowrap">
+                  Em aberto
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-100">
               {clients.map((client) => (
                 <tr key={client.id} className="hover:bg-ink-50">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 whitespace-nowrap">
                     <Link
                       href={`/admin/clientes/${client.id}`}
                       className="font-medium text-brand-700 hover:underline"
@@ -66,18 +75,26 @@ export default async function ClientesPage({
                       {client.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-ink-600">{client.docNumber}</td>
-                  <td className="px-4 py-3 text-ink-600">{client.phone}</td>
-                  <td className="px-4 py-3 text-right text-ink-900">
+                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                    {client.docNumber}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                    {client.phone}
+                  </td>
+                  <td className="px-4 py-3 text-right whitespace-nowrap text-ink-900">
                     {formatBRL(client.totalContratado)}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-warning-700">
+                  <td className="px-4 py-3 text-right whitespace-nowrap font-medium text-warning-700">
                     {formatBRL(client.totalPendente)}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <p className="mt-1.5 text-xs text-ink-400 sm:hidden">
+          Arraste para o lado para ver mais →
+        </p>
         </div>
       )}
     </div>
