@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/admin", label: "Comprovantes" },
   { href: "/admin/financeiro", label: "Financeiro" },
   { href: "/admin/clientes", label: "Clientes" },
+  { href: "/admin/auditoria", label: "Auditoria" },
 ];
 
 export function AdminNav() {
