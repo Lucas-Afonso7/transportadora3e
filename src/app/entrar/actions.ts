@@ -28,7 +28,7 @@ export async function clientLoginAction(
   formData: FormData,
 ): Promise<LoginFormState> {
   const ip = await getRequestIp();
-  if (isRateLimited(`client:${ip}`)) {
+  if (await isRateLimited(`client:${ip}`)) {
     return { error: RATE_LIMITED_MESSAGE };
   }
 
