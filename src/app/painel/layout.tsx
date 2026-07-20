@@ -3,6 +3,7 @@ import { requireClientSession } from "@/lib/auth/session";
 import { clientLogoutAction } from "@/lib/auth/logout-actions";
 import { PainelNav } from "@/components/painel/PainelNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 export default async function PainelLayout({
   children,
@@ -13,6 +14,7 @@ export default async function PainelLayout({
 
   return (
     <div className="min-h-screen bg-page">
+      <AutoRefresh />
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-page-x py-3">
           <div className="flex items-center gap-2">

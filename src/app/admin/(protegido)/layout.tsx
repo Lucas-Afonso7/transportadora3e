@@ -2,6 +2,7 @@ import { requireAdminSession } from "@/lib/auth/session";
 import { adminLogoutAction } from "@/lib/auth/logout-actions";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 export default async function AdminLayout({
   children,
@@ -12,6 +13,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-page">
+      <AutoRefresh />
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-page-x py-3">
           <div>
