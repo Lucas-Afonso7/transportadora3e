@@ -10,8 +10,14 @@ import {
 
 export function SettingsMenu({
   logoutAction,
+  align = "down",
 }: {
   logoutAction: () => void | Promise<void>;
+  // "down": abre pra baixo, a partir do botão (uso no topo de um cabeçalho).
+  // "up": abre pra cima (uso quando o botão fica perto do fim da tela,
+  // como no rodapé da sidebar do admin — senão o menu abriria pra fora
+  // da viewport).
+  align?: "down" | "up";
 }) {
   const [open, setOpen] = useState(false);
   // null até montar no cliente — evita mismatch de hidratação, já que o
@@ -77,7 +83,11 @@ export function SettingsMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-60 rounded-card border border-border bg-surface p-1.5 shadow-card">
+        <div
+          className={`absolute right-0 z-20 w-60 rounded-card border border-border bg-surface p-1.5 shadow-card ${
+            align === "up" ? "bottom-full mb-2" : "top-full mt-2"
+          }`}
+        >
           <button
             type="button"
             onClick={toggleTheme}
