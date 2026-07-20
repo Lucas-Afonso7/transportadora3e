@@ -10,15 +10,14 @@ const LINKS = [
   { href: "/admin/auditoria", label: "Auditoria" },
 ];
 
-export function AdminNav() {
+// onNavigate: usado pelo drawer mobile da sidebar pra fechar o menu ao
+// escolher um link — no desktop (sidebar sempre visível) fica undefined
+// e o clique não faz nada além de navegar.
+export function AdminNav({ onNavigate }: { onNavigate?: () => void } = {}) {
   const pathname = usePathname();
 
   return (
-    // overflow-x-auto + whitespace-nowrap: com 4 itens, o menu não cabe em
-    // 390px de largura — em vez de estourar a página inteira (o que
-    // aconteceu antes dessa correção), ele mesmo vira um carrossel
-    // horizontal curto, sem afetar o resto do layout.
-    <nav className="flex items-center gap-1 overflow-x-auto">
+    <nav className="flex flex-col gap-1">
       {LINKS.map((link) => {
         const isActive =
           link.href === "/admin"
@@ -29,7 +28,8 @@ export function AdminNav() {
           <Link
             key={link.href}
             href={link.href}
-            className={`shrink-0 whitespace-nowrap rounded-control px-3 py-1.5 text-sm font-medium transition-colors ${
+            onClick={onNavigate}
+            className={`rounded-control px-3 py-2 text-sm font-medium transition-colors ${
               isActive
                 ? "bg-brand-tint text-brand-tint-fg"
                 : "text-fg-muted hover:bg-surface-hover hover:text-fg"
