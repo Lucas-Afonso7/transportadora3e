@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
 import "./globals.css";
@@ -18,11 +19,17 @@ export const metadata: Metadata = {
   description: "Gestão de pagamentos da Transportadora 3E",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Ler headers() aqui já é o suficiente pra forçar renderização
+  // dinâmica em toda página do app (necessário pra CSP com nonce — ver
+  // src/proxy.ts, que gera esse nonce por requisição e não existe em
+  // build estático).
+  const nonce = (await headers()).get("x-nonce");
+
   return (
     <html
       lang="pt-BR"
@@ -35,7 +42,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <ThemeInitScript />
+        <ThemeInitScript nonce={nonce} />
       </head>
       <body className="flex min-h-full flex-col bg-page text-fg">
         {children}

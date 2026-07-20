@@ -12,6 +12,14 @@ const THEME_INIT_SCRIPT = `
 })();
 `;
 
-export function ThemeInitScript() {
-  return <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />;
+// nonce vem do header x-nonce que o proxy.ts gera por requisição — sem
+// ele, a CSP (nonce-based, ver src/proxy.ts) bloqueia esse script inline
+// igual bloquearia qualquer outro não autorizado.
+export function ThemeInitScript({ nonce }: { nonce: string | null }) {
+  return (
+    <script
+      nonce={nonce ?? undefined}
+      dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+    />
+  );
 }
