@@ -47,35 +47,35 @@ export default async function ClienteDetailPage({
     <div>
       <Link
         href="/admin/clientes"
-        className="mb-4 inline-block text-sm text-ink-500 hover:text-ink-900"
+        className="mb-4 inline-block text-sm text-fg-muted hover:text-fg"
       >
         ← Clientes
       </Link>
 
-      <h1 className="mb-1 text-2xl font-bold text-ink-900">{client.name}</h1>
-      <p className="mb-6 text-sm text-ink-500">{client.docNumber}</p>
+      <h1 className="mb-1 text-2xl font-bold text-fg">{client.name}</h1>
+      <p className="mb-6 text-sm text-fg-muted">{client.docNumber}</p>
 
       {sucesso && SUCCESS_MESSAGES[sucesso] && (
-        <p className="mb-6 rounded-control bg-brand-100 px-4 py-3 text-sm font-medium text-brand-700">
+        <p className="mb-6 rounded-control bg-brand-tint px-4 py-3 text-sm font-medium text-brand-tint-fg">
           {SUCCESS_MESSAGES[sucesso]}
         </p>
       )}
       {erro && (
-        <p className="mb-6 rounded-control bg-danger-50 px-4 py-3 text-sm font-medium text-danger-700">
+        <p className="mb-6 rounded-control bg-danger-tint px-4 py-3 text-sm font-medium text-danger-tint-fg">
           {ERROR_MESSAGES[erro] ?? "Não foi possível concluir a ação."}
         </p>
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-card border border-ink-200 bg-white p-5 shadow-card">
-          <h2 className="mb-3 text-sm font-semibold text-ink-900">
+        <div className="rounded-card border border-border bg-surface p-5 shadow-card">
+          <h2 className="mb-3 text-sm font-semibold text-fg">
             Dados do cliente
           </h2>
           <form action={updateClientAction} className="space-y-3">
             <input type="hidden" name="clientId" value={client.id} />
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-ink-600">
+              <label className="mb-1 block text-xs font-medium text-fg-muted">
                 Nome
               </label>
               <input
@@ -83,12 +83,12 @@ export default async function ClienteDetailPage({
                 type="text"
                 defaultValue={client.name}
                 required
-                className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-ink-600">
+              <label className="mb-1 block text-xs font-medium text-fg-muted">
                 Telefone / WhatsApp
               </label>
               <input
@@ -96,19 +96,19 @@ export default async function ClienteDetailPage({
                 type="text"
                 defaultValue={client.phone}
                 required
-                className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-ink-600">
+              <label className="mb-1 block text-xs font-medium text-fg-muted">
                 E-mail (opcional)
               </label>
               <input
                 name="email"
                 type="email"
                 defaultValue={client.email ?? ""}
-                className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
             </div>
 
@@ -121,17 +121,17 @@ export default async function ClienteDetailPage({
           </form>
         </div>
 
-        <div className="rounded-card border border-ink-200 bg-white p-5 shadow-card">
-          <h2 className="mb-3 text-sm font-semibold text-ink-900">Acesso</h2>
-          <p className="mb-3 text-sm text-ink-500">
-            Login: <span className="font-medium text-ink-900">{client.docNumber}</span>
+        <div className="rounded-card border border-border bg-surface p-5 shadow-card">
+          <h2 className="mb-3 text-sm font-semibold text-fg">Acesso</h2>
+          <p className="mb-3 text-sm text-fg-muted">
+            Login: <span className="font-medium text-fg">{client.docNumber}</span>
           </p>
           <RegeneratePasswordButton clientId={client.id} />
         </div>
       </div>
 
       <div className="mt-8">
-        <h2 className="mb-3 text-base font-semibold text-ink-900">
+        <h2 className="mb-3 text-base font-semibold text-fg">
           Serviços contratados
         </h2>
         <div className="space-y-3">

@@ -2,8 +2,8 @@ import { createServiceAction } from "@/app/admin/(protegido)/clientes/actions";
 
 export function AddServiceForm({ clientId }: { clientId: number }) {
   return (
-    <details className="rounded-card border border-ink-200 bg-white p-4 shadow-card">
-      <summary className="cursor-pointer text-sm font-medium text-brand-700">
+    <details className="rounded-card border border-border bg-surface p-4 shadow-card">
+      <summary className="cursor-pointer text-sm font-medium text-brand-700 dark:text-brand-400">
         + Adicionar serviço
       </summary>
 
@@ -11,7 +11,7 @@ export function AddServiceForm({ clientId }: { clientId: number }) {
         <input type="hidden" name="clientId" value={clientId} />
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-ink-600">
+          <label className="mb-1 block text-xs font-medium text-fg-muted">
             Descrição
           </label>
           <input
@@ -19,13 +19,13 @@ export function AddServiceForm({ clientId }: { clientId: number }) {
             type="text"
             required
             placeholder="Ex.: Frete Belo Horizonte / São Paulo"
-            className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-xs font-medium text-ink-600">
+            <label className="mb-1 block text-xs font-medium text-fg-muted">
               Valor total (R$)
             </label>
             <input
@@ -34,30 +34,30 @@ export function AddServiceForm({ clientId }: { clientId: number }) {
               step="0.01"
               min="0.01"
               required
-              className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-ink-600">
+            <label className="mb-1 block text-xs font-medium text-fg-muted">
               Data do serviço
             </label>
             <input
               name="serviceDate"
               type="date"
               required
-              className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
             />
           </div>
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-ink-600">
+          <label className="mb-1 block text-xs font-medium text-fg-muted">
             Vencimento (opcional)
           </label>
           <input
             name="dueDate"
             type="date"
-            className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
           />
         </div>
 

@@ -22,19 +22,19 @@ export default async function AuditoriaPage() {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-bold text-ink-900">Auditoria</h1>
-      <p className="mb-6 text-sm text-ink-500">
+      <h1 className="mb-1 text-2xl font-bold text-fg">Auditoria</h1>
+      <p className="mb-6 text-sm text-fg-muted">
         Histórico completo de todas as mudanças de status de pagamento —
         quem fez, quando, e o valor antes/depois.
       </p>
 
       {entries.length === 0 ? (
-        <p className="text-sm text-ink-500">Nenhum evento registrado ainda.</p>
+        <p className="text-sm text-fg-muted">Nenhum evento registrado ainda.</p>
       ) : (
         <div>
-        <div className="overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
+        <div className="overflow-x-auto rounded-card border border-border bg-surface shadow-card">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="border-b border-ink-100 text-ink-500">
+            <thead className="border-b border-border-muted text-fg-muted">
               <tr>
                 <th className="px-4 py-3 font-medium whitespace-nowrap">
                   Quando
@@ -54,10 +54,10 @@ export default async function AuditoriaPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-100">
+            <tbody className="divide-y divide-border-muted">
               {entries.map((entry) => (
                 <tr key={entry.id}>
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                  <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
                     {formatDateTime(entry.createdAt)} às{" "}
                     {formatTime(entry.createdAt)}
                   </td>
@@ -68,19 +68,19 @@ export default async function AuditoriaPage() {
                       {ACTION_LABEL[entry.action] ?? entry.action}
                     </span>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-900">
+                  <td className="px-4 py-3 whitespace-nowrap text-fg">
                     {entry.actorLabel}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                  <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
                     {entry.clientName}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                  <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
                     {entry.serviceDescription}
                   </td>
-                  <td className="px-4 py-3 text-right whitespace-nowrap font-medium text-ink-900">
+                  <td className="px-4 py-3 text-right whitespace-nowrap font-medium text-fg">
                     {entry.amountBefore &&
                     entry.amountBefore !== entry.amountAfter ? (
-                      <span className="text-xs text-ink-400">
+                      <span className="text-xs text-fg-subtle">
                         {formatBRL(entry.amountBefore)} →{" "}
                       </span>
                     ) : null}
@@ -91,7 +91,7 @@ export default async function AuditoriaPage() {
             </tbody>
           </table>
         </div>
-        <p className="mt-1.5 text-xs text-ink-400 sm:hidden">
+        <p className="mt-1.5 text-xs text-fg-subtle sm:hidden">
           Arraste para o lado para ver mais →
         </p>
         </div>

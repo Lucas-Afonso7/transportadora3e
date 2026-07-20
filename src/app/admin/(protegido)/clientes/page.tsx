@@ -21,8 +21,8 @@ export default async function ClientesPage({
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-ink-900">Clientes</h1>
-          <p className="mt-1 text-sm text-ink-500">
+          <h1 className="text-2xl font-bold text-fg">Clientes</h1>
+          <p className="mt-1 text-sm text-fg-muted">
             {clients.length} cliente{clients.length === 1 ? "" : "s"}{" "}
             cadastrado{clients.length === 1 ? "" : "s"}.
           </p>
@@ -36,18 +36,18 @@ export default async function ClientesPage({
       </div>
 
       {erro && (
-        <p className="mb-6 rounded-control bg-danger-50 px-4 py-3 text-sm font-medium text-danger-700">
+        <p className="mb-6 rounded-control bg-danger-tint px-4 py-3 text-sm font-medium text-danger-tint-fg">
           {ERROR_MESSAGES[erro] ?? "Não foi possível concluir a ação."}
         </p>
       )}
 
       {clients.length === 0 ? (
-        <p className="text-sm text-ink-500">Nenhum cliente cadastrado ainda.</p>
+        <p className="text-sm text-fg-muted">Nenhum cliente cadastrado ainda.</p>
       ) : (
         <div>
-        <div className="overflow-x-auto rounded-card border border-ink-200 bg-white shadow-card">
+        <div className="overflow-x-auto rounded-card border border-border bg-surface shadow-card">
           <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="border-b border-ink-100 text-ink-500">
+            <thead className="border-b border-border-muted text-fg-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Nome</th>
                 <th className="px-4 py-3 font-medium whitespace-nowrap">
@@ -64,27 +64,27 @@ export default async function ClientesPage({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-100">
+            <tbody className="divide-y divide-border-muted">
               {clients.map((client) => (
-                <tr key={client.id} className="hover:bg-ink-50">
+                <tr key={client.id} className="hover:bg-surface-hover">
                   <td className="px-4 py-3 whitespace-nowrap">
                     <Link
                       href={`/admin/clientes/${client.id}`}
-                      className="font-medium text-brand-700 hover:underline"
+                      className="font-medium text-brand-700 hover:underline dark:text-brand-400"
                     >
                       {client.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                  <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
                     {client.docNumber}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-600">
+                  <td className="px-4 py-3 whitespace-nowrap text-fg-muted">
                     {client.phone}
                   </td>
-                  <td className="px-4 py-3 text-right whitespace-nowrap text-ink-900">
+                  <td className="px-4 py-3 text-right whitespace-nowrap text-fg">
                     {formatBRL(client.totalContratado)}
                   </td>
-                  <td className="px-4 py-3 text-right whitespace-nowrap font-medium text-warning-700">
+                  <td className="px-4 py-3 text-right whitespace-nowrap font-medium text-warning-700 dark:text-warning-500">
                     {formatBRL(client.totalPendente)}
                   </td>
                 </tr>
@@ -92,7 +92,7 @@ export default async function ClientesPage({
             </tbody>
           </table>
         </div>
-        <p className="mt-1.5 text-xs text-ink-400 sm:hidden">
+        <p className="mt-1.5 text-xs text-fg-subtle sm:hidden">
           Arraste para o lado para ver mais →
         </p>
         </div>

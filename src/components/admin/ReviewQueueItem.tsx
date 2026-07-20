@@ -12,24 +12,24 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
   const isImage = item.proofMimeType?.startsWith("image/") ?? false;
 
   return (
-    <div className="rounded-card border border-ink-200 bg-white p-4 shadow-card">
+    <div className="rounded-card border border-border bg-surface p-4 shadow-card">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="font-medium text-ink-900">{item.clientName}</p>
-          <p className="text-xs text-ink-500">{item.clientDocNumber}</p>
+          <p className="font-medium text-fg">{item.clientName}</p>
+          <p className="text-xs text-fg-muted">{item.clientDocNumber}</p>
         </div>
-        <span className="text-xs text-ink-500">
+        <span className="text-xs text-fg-muted">
           {formatDateTime(item.createdAt)}
         </span>
       </div>
 
-      <p className="mt-2 text-sm text-ink-700">{item.serviceDescription}</p>
+      <p className="mt-2 text-sm text-fg-muted">{item.serviceDescription}</p>
 
-      <div className="mt-2 flex items-baseline justify-between border-t border-ink-100 pt-2">
-        <span className="text-sm text-ink-500">
+      <div className="mt-2 flex items-baseline justify-between border-t border-border-muted pt-2">
+        <span className="text-sm text-fg-muted">
           {METHOD_LABEL[item.method]}
         </span>
-        <span className="font-semibold text-ink-900">
+        <span className="font-semibold text-fg">
           {formatBRL(item.amount)}
         </span>
       </div>
@@ -46,7 +46,7 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
             <img
               src={`/api/comprovantes/${item.proofId}`}
               alt={`Comprovante de ${item.clientName}`}
-              className="max-h-56 w-full rounded-control border border-ink-200 object-contain"
+              className="max-h-56 w-full rounded-control border border-border object-contain"
             />
           </a>
         ) : (
@@ -54,7 +54,7 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
             href={`/api/comprovantes/${item.proofId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
+            className="mt-3 inline-block text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
           >
             Abrir comprovante (PDF)
           </a>

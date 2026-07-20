@@ -7,7 +7,7 @@ import { rejectPaymentAction } from "@/app/admin/(protegido)/actions";
 export function RejectButton({ paymentId }: { paymentId: number }) {
   return (
     <details className="w-full sm:w-auto">
-      <summary className="inline-block cursor-pointer list-none rounded-control border border-danger-500 px-4 py-2 text-sm font-medium text-danger-700 hover:bg-danger-50 [&::-webkit-details-marker]:hidden">
+      <summary className="inline-block cursor-pointer list-none rounded-control border border-danger-500 px-4 py-2 text-sm font-medium text-danger-tint-fg hover:bg-danger-tint [&::-webkit-details-marker]:hidden">
         Rejeitar
       </summary>
       <form action={rejectPaymentAction} className="mt-2 space-y-2">
@@ -17,7 +17,7 @@ export function RejectButton({ paymentId }: { paymentId: number }) {
           required
           rows={2}
           placeholder="Motivo da rejeição — o cliente vai ver essa mensagem"
-          className="w-full rounded-control border border-ink-300 px-3 py-2 text-sm text-ink-900 outline-none focus:border-danger-500 focus:ring-2 focus:ring-danger-50"
+          className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-danger-500 focus:ring-2 focus:ring-danger-500/20"
         />
         <button
           type="submit"
