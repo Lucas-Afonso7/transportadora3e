@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth/session";
@@ -8,6 +9,13 @@ import { hashPassword, generateRandomPassword } from "@/lib/auth/password";
 import { isValidDocNumberFormat } from "@/lib/doc-number";
 import { parseAmountInput } from "@/lib/money";
 import { computeApprovedAmount } from "@/lib/payments";
+
+// Sem isso, os links de navegação (sempre visíveis no cabeçalho, e por
+// isso sempre pré-carregados pelo Next) continuam mostrando a versão
+// antiga da lista/ficha do cliente até um reload manual.
+function revalidateEverything() {
+  revalidatePath("/", "layout");
+}
 
 // ---------------------------------------------------------------------------
 // Cliente
@@ -73,6 +81,8 @@ export async function createClientAction(
     data: { docNumber, name, phone, email, passwordHash },
   });
 
+  revalidateEverything();
+
   return {
     error: null,
     created: { id: client.id, docNumber: client.docNumber, name: client.name, password },
@@ -120,6 +130,7 @@ export async function updateClientAction(formData: FormData) {
     data: { name, phone, email },
   });
 
+  revalidateEverything();
   redirect(`/admin/clientes/${clientId}?sucesso=cliente_atualizado`);
 }
 
@@ -222,6 +233,7 @@ export async function createServiceAction(formData: FormData) {
     },
   });
 
+  revalidateEverything();
   redirect(`/admin/clientes/${clientId}?sucesso=servico_criado`);
 }
 
@@ -288,5 +300,6 @@ export async function updateServiceAction(formData: FormData) {
     },
   });
 
+  revalidateEverything();
   redirect(`/admin/clientes/${service.clientId}?sucesso=servico_atualizado`);
 }

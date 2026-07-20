@@ -1,8 +1,18 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { requireAdminSession } from "@/lib/auth/session";
 import { approvePayment, rejectPayment } from "@/lib/actions/review-payment";
+
+// Sem isso, os links de navegação (sempre visíveis no cabeçalho, e por
+// isso sempre pré-carregados pelo Next) continuam mostrando a versão
+// antiga da página até um reload manual — revalidatePath invalida esse
+// cache de prefetch em todas as páginas de uma vez (admin e painel do
+// cliente compartilham os mesmos dados de pagamento).
+function revalidateEverything() {
+  revalidatePath("/", "layout");
+}
 
 function parsePaymentId(formData: FormData): number | null {
   const raw = formData.get("paymentId");
@@ -22,6 +32,7 @@ export async function approvePaymentAction(formData: FormData) {
 
   if (outcome === "ja_revisado") redirect("/admin?erro=ja_revisado");
   if (outcome === "excede_total") redirect("/admin?erro=excede_total");
+  revalidateEverything();
   redirect("/admin?sucesso=aprovado");
 }
 
@@ -39,5 +50,6 @@ export async function rejectPaymentAction(formData: FormData) {
 
   if (outcome === "motivo_obrigatorio") redirect("/admin?erro=dados_invalidos");
   if (outcome === "ja_revisado") redirect("/admin?erro=ja_revisado");
+  revalidateEverything();
   redirect("/admin?sucesso=rejeitado");
 }

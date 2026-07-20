@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireClientSession } from "@/lib/auth/session";
 import { submitPayment } from "@/lib/actions/submit-payment";
@@ -43,5 +44,10 @@ export async function submitPaymentAction(
     return { error: result.error };
   }
 
+  // Sem isso, o link "Comprovantes"/nav do admin (sempre no cabeçalho, e
+  // por isso sempre pré-carregado pelo Next) continua mostrando a fila
+  // antiga até um reload manual — revalidatePath invalida esse cache de
+  // prefetch em todas as páginas de uma vez.
+  revalidatePath("/", "layout");
   redirect("/painel?pagamento=enviado");
 }
