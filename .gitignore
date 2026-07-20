@@ -48,3 +48,6 @@ next-env.d.ts
 
 # backups do banco (dados reais de clientes/pagamentos — nunca no git)
 /backups/
+
+.vercel
+.env*
