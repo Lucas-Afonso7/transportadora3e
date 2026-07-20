@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Alterna o dark: por classe (.dark no <html>) em vez de só seguir o SO —
-   assim o cliente pode escolher o tema manualmente (ThemeToggle) e a
+   assim o cliente pode escolher o tema manualmente (SettingsMenu) e a
    escolha fica salva, independente da preferência do sistema. */
 @custom-variant dark (&:where(.dark, .dark *));
 

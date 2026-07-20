@@ -2,8 +2,9 @@ import Image from "next/image";
 import { requireClientSession } from "@/lib/auth/session";
 import { clientLogoutAction } from "@/lib/auth/logout-actions";
 import { PainelNav } from "@/components/painel/PainelNav";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { SettingsMenu } from "@/components/SettingsMenu";
+import { ClientNotificationWatcher } from "@/components/painel/ClientNotificationWatcher";
 
 export default async function PainelLayout({
   children,
@@ -15,6 +16,7 @@ export default async function PainelLayout({
   return (
     <div className="min-h-screen bg-page">
       <AutoRefresh />
+      <ClientNotificationWatcher />
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-page-x py-3">
           <div className="flex items-center gap-2">
@@ -33,17 +35,7 @@ export default async function PainelLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <form action={clientLogoutAction}>
-              <button
-                type="submit"
-                className="text-sm font-medium text-fg-muted hover:text-fg"
-              >
-                Sair
-              </button>
-            </form>
-          </div>
+          <SettingsMenu logoutAction={clientLogoutAction} />
         </div>
         <div className="mx-auto max-w-5xl px-page-x pb-3">
           <PainelNav />
