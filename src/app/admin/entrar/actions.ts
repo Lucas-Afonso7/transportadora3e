@@ -40,7 +40,18 @@ export async function adminLoginAction(
 
   const { username, password } = parsed.data;
 
-  const admin = await prisma.admin.findUnique({ where: { username } });
+  // select explícito: só os campos que essa função de fato usa (mesmo
+  // motivo do login do cliente — ver comentário equivalente em
+  // src/app/entrar/actions.ts).
+  const admin = await prisma.admin.findUnique({
+    where: { username },
+    select: {
+      id: true,
+      passwordHash: true,
+      failedLoginAttempts: true,
+      lockedUntil: true,
+    },
+  });
 
   // Roda o bcrypt.compare ANTES de checar se a conta existe/está
   // bloqueada — mesmo motivo do login do cliente (ver comentário

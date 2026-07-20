@@ -21,9 +21,18 @@ export type AdminClientSummary = {
 };
 
 export async function getAllClients(): Promise<AdminClientSummary[]> {
+  // select explícito (em vez de include): só os campos que essa função
+  // usa. Sem isso o Prisma traz cada Client inteiro pra memória do
+  // servidor — incluindo passwordHash — só pra montar a listagem.
   const clients = await prisma.client.findMany({
     orderBy: { name: "asc" },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      docNumber: true,
+      phone: true,
+      email: true,
+      createdAt: true,
       services: {
         select: {
           totalAmount: true,
@@ -73,7 +82,16 @@ export type AdminClientDetail = {
 export async function getClientDetail(
   clientId: number,
 ): Promise<AdminClientDetail | null> {
-  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  const client = await prisma.client.findUnique({
+    where: { id: clientId },
+    select: {
+      id: true,
+      name: true,
+      docNumber: true,
+      phone: true,
+      email: true,
+    },
+  });
   if (!client) return null;
 
   const services = await getClientServiceSummaries(clientId);

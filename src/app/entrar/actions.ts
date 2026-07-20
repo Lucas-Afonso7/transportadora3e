@@ -43,7 +43,21 @@ export async function clientLoginAction(
 
   const { docNumber, password } = parsed.data;
 
-  const client = await prisma.client.findUnique({ where: { docNumber } });
+  // select explícito: só os campos que essa função de fato usa. Sem
+  // isso, o Prisma traz a linha inteira (nome, telefone, e-mail...) pra
+  // memória do servidor à toa — nunca vazou pro navegador (só campos
+  // escolhidos a dedo chegam a ser retornados por essa action), mas
+  // depender de "sempre lembrar de nunca devolver o objeto inteiro" é
+  // frágil; um select na query elimina essa classe de erro de vez.
+  const client = await prisma.client.findUnique({
+    where: { docNumber },
+    select: {
+      id: true,
+      passwordHash: true,
+      failedLoginAttempts: true,
+      lockedUntil: true,
+    },
+  });
 
   // Roda o bcrypt.compare ANTES de checar se a conta existe/está
   // bloqueada — client?.passwordHash é undefined quando não existe, e

@@ -24,9 +24,17 @@ export async function getFinancialOverview(): Promise<{
   overview: FinancialOverview;
   porCliente: ClientFinancialRow[];
 }> {
+  // select explícito (em vez de include): só os campos que essa função
+  // usa. Sem isso o Prisma traz cada Client inteiro pra memória do
+  // servidor — incluindo passwordHash — só pra montar um resumo com
+  // nome e totais. Nunca vazou pro navegador (porCliente abaixo só
+  // pega os campos escolhidos a dedo), mas o select elimina essa classe
+  // de erro na raiz em vez de depender de sempre lembrar disso.
   const clients = await prisma.client.findMany({
     orderBy: { name: "asc" },
-    include: {
+    select: {
+      id: true,
+      name: true,
       services: {
         select: {
           totalAmount: true,
