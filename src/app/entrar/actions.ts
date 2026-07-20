@@ -45,6 +45,18 @@ export async function clientLoginAction(
 
   const client = await prisma.client.findUnique({ where: { docNumber } });
 
+  // Roda o bcrypt.compare ANTES de checar se a conta existe/está
+  // bloqueada — client?.passwordHash é undefined quando não existe, e
+  // verifyPassword trata isso comparando contra um hash fixo (ver
+  // password.ts). Sem isso, "CPF não cadastrado" respondia na hora
+  // enquanto "CPF cadastrado, senha errada" demorava o custo do bcrypt —
+  // dava pra descobrir se um CPF existe só pelo tempo de resposta, mesmo
+  // com mensagem de erro idêntica.
+  const passwordOk = await verifyPassword(
+    password,
+    client?.passwordHash ?? null,
+  );
+
   if (!client) {
     return { error: INVALID_CREDENTIALS_MESSAGE };
   }
@@ -52,8 +64,6 @@ export async function clientLoginAction(
   if (isLockedOut(client.lockedUntil)) {
     return { error: LOCKED_MESSAGE };
   }
-
-  const passwordOk = await verifyPassword(password, client.passwordHash);
 
   if (!passwordOk) {
     const { failedLoginAttempts, lockedUntil } = nextLockState(

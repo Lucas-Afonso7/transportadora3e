@@ -24,4 +24,13 @@ describe("hashPassword / verifyPassword", () => {
     ]);
     expect(hashA).not.toBe(hashB);
   });
+
+  // `null` representa "conta não encontrada" (ver comentário em
+  // password.ts) — sempre falso, mas sempre passando por bcrypt.compare
+  // de verdade (nunca um atalho que retorna sem comparar nada), pra não
+  // dar timing diferente de uma conta que existe.
+  it("com passwordHash null (conta inexistente), sempre rejeita", async () => {
+    expect(await verifyPassword("qualquer-coisa", null)).toBe(false);
+    expect(await verifyPassword("", null)).toBe(false);
+  });
 });

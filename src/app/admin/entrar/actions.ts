@@ -42,6 +42,15 @@ export async function adminLoginAction(
 
   const admin = await prisma.admin.findUnique({ where: { username } });
 
+  // Roda o bcrypt.compare ANTES de checar se a conta existe/está
+  // bloqueada — mesmo motivo do login do cliente (ver comentário
+  // equivalente em src/app/entrar/actions.ts): sem isso, dava pra
+  // descobrir se um usuário de admin existe só pelo tempo de resposta.
+  const passwordOk = await verifyPassword(
+    password,
+    admin?.passwordHash ?? null,
+  );
+
   if (!admin) {
     return { error: INVALID_CREDENTIALS_MESSAGE };
   }
@@ -49,8 +58,6 @@ export async function adminLoginAction(
   if (isLockedOut(admin.lockedUntil)) {
     return { error: LOCKED_MESSAGE };
   }
-
-  const passwordOk = await verifyPassword(password, admin.passwordHash);
 
   if (!passwordOk) {
     const { failedLoginAttempts, lockedUntil } = nextLockState(
