@@ -11,13 +11,21 @@ type ClientPayment = {
   amount: string;
 };
 
+type ClientService = {
+  id: number;
+  description: string;
+  totalAmount: string;
+};
+
 const POLL_MS = 20000;
 
-// A primeira busca só define a linha de base (status atual de cada
-// pagamento quando a aba abriu) — notificação só dispara quando o status
-// de um pagamento MUDA depois disso (aprovado ou rejeitado pelo admin).
+// A primeira busca só define a linha de base (pagamentos e serviços que
+// já existiam quando a aba abriu) — não notifica nada disso. Depois,
+// notifica quando: 1) um pagamento muda de status (aprovado/rejeitado
+// pelo admin), ou 2) um serviço novo aparece (cadastrado pelo admin).
 export function ClientNotificationWatcher() {
   const knownStatus = useRef<Map<number, string> | null>(null);
+  const knownServiceIds = useRef<Set<number> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,12 +37,18 @@ export function ClientNotificationWatcher() {
         });
         if (!res.ok || cancelled) return;
 
-        const { payments } = (await res.json()) as { payments: ClientPayment[] };
+        const { payments, services } = (await res.json()) as {
+          payments: ClientPayment[];
+          services: ClientService[];
+        };
         if (cancelled) return;
 
-        if (knownStatus.current === null) {
+        if (knownStatus.current === null || knownServiceIds.current === null) {
           knownStatus.current = new Map(
             payments.map((payment) => [payment.id, payment.status]),
+          );
+          knownServiceIds.current = new Set(
+            services.map((service) => service.id),
           );
           return;
         }
@@ -56,6 +70,15 @@ export function ClientNotificationWatcher() {
               `Seu pagamento de ${formatBRL(payment.amount)} para "${payment.serviceDescription}" foi rejeitado.`,
             );
           }
+        }
+
+        for (const service of services) {
+          if (knownServiceIds.current.has(service.id)) continue;
+          knownServiceIds.current.add(service.id);
+          notify(
+            "Novo serviço",
+            `"${service.description}" foi adicionado, no valor de ${formatBRL(service.totalAmount)}.`,
+          );
         }
       } catch {
         // Falha de rede pontual não é motivo pra quebrar nada — tenta de novo no próximo ciclo.
