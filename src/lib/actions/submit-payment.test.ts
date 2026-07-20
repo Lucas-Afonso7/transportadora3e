@@ -181,6 +181,32 @@ describe("submitPayment", () => {
     expect(result.ok).toBe(false);
   });
 
+  it("PIX com arquivo cujo conteúdo real não bate com o type declarado é rejeitado", async () => {
+    // `type` diz "image/png", mas o conteúdo de verdade é HTML — exatamente
+    // o cenário que a checagem por magic bytes existe pra barrar (um
+    // arquivo malicioso renomeado/com type falsificado não passa só
+    // porque o navegador reportou um Content-Type "de boa fé").
+    const fakeBytes = new TextEncoder().encode(
+      "<html><script>alert(1)</script></html>",
+    );
+    const file = new File([fakeBytes], "comprovante.png", {
+      type: "image/png",
+    });
+
+    const result = await submitPayment({
+      clientId,
+      serviceId,
+      method: "PIX",
+      amountRaw: "100.00",
+      proofFile: file,
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toMatch(/imagem.*ou PDF/);
+    }
+  });
+
   it("PIX com arquivo grande demais (>8MB) é rejeitado", async () => {
     const bigBuffer = new Uint8Array(9 * 1024 * 1024);
     const file = new File([bigBuffer], "grande.png", { type: "image/png" });
@@ -197,7 +223,13 @@ describe("submitPayment", () => {
   });
 
   it("PIX com arquivo válido cria Payment + PaymentProof + AuditLog juntos", async () => {
-    const file = new File([new Uint8Array([1, 2, 3, 4])], "comprovante.png", {
+    // Assinatura real de PNG (8 bytes) — precisa ser conteúdo de verdade
+    // agora que a validação checa os magic bytes, não só o `type`
+    // declarado no File.
+    const pngSignature = new Uint8Array([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+    ]);
+    const file = new File([pngSignature], "comprovante.png", {
       type: "image/png",
     });
 
@@ -217,7 +249,7 @@ describe("submitPayment", () => {
     });
     expect(proof).not.toBeNull();
     expect(proof?.mimeType).toBe("image/png");
-    expect(proof?.fileSizeBytes).toBe(4);
+    expect(proof?.fileSizeBytes).toBe(pngSignature.length);
 
     const auditLogs = await prisma.auditLog.findMany({
       where: { paymentId: result.paymentId },

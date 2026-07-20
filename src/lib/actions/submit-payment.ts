@@ -7,6 +7,7 @@ import {
   MAX_PROOF_SIZE_BYTES,
   isAllowedProofMimeType,
 } from "@/lib/uploads";
+import { detectFileSignature } from "@/lib/file-signature";
 import { saveProofFile, deleteProofFile } from "@/lib/storage";
 import { formatBRL } from "@/lib/format";
 import { parseAmountInput } from "@/lib/money";
@@ -77,15 +78,22 @@ export async function submitPayment(
       };
     }
 
-    if (!isAllowedProofMimeType(file.type)) {
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // `file.type` (o que o navegador reporta) nunca decide se o arquivo
+    // é permitido — só o que os bytes de verdade dizem que ele é. Um
+    // .html renomeado pra "comprovante.png" com type "image/png" é
+    // barrado aqui, mesmo passando por qualquer checagem baseada só no
+    // nome/type declarado.
+    const detectedType = detectFileSignature(buffer);
+    if (!detectedType || !isAllowedProofMimeType(detectedType)) {
       return {
         ok: false,
         error: "Envie o comprovante em imagem (JPG/PNG/WEBP) ou PDF.",
       };
     }
 
-    const extension = ALLOWED_PROOF_MIME_TYPES[file.type];
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const extension = ALLOWED_PROOF_MIME_TYPES[detectedType];
 
     // 1) Grava o arquivo em disco primeiro. Só se isso funcionar é que
     //    tocamos no banco — assim nunca existe um Payment sem comprovante
@@ -109,7 +117,11 @@ export async function submitPayment(
             paymentId: payment.id,
             filePath: storedFileName,
             originalFileName: file.name,
-            mimeType: file.type,
+            // Tipo detectado pelo conteúdo real, não o `file.type`
+            // declarado pelo navegador — é o que a rota de download usa
+            // no Content-Type da resposta, então também não pode vir de
+            // um campo que o cliente controla.
+            mimeType: detectedType,
             fileSizeBytes: file.size,
           },
         });
