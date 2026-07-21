@@ -34,11 +34,17 @@ export type CreateClientFormState = {
 const MAX_TEXT_FIELD_LENGTH = 191;
 
 const createClientSchema = z.object({
+  // Sempre normaliza pra só dígitos antes de gravar — o login (ver
+  // src/app/entrar/actions.ts) faz o mesmo antes de buscar no banco. Se
+  // esse cadastro guardasse o CPF com pontuação (o que o admin digitou
+  // naturalmente), o login nunca acharia o cliente: "529.982.247-25"
+  // salvo aqui nunca bate com "52998224725" que o login procura.
   docNumber: z
     .string()
     .trim()
     .min(1, "Informe o CPF ou CNPJ.")
-    .max(MAX_TEXT_FIELD_LENGTH, "CPF/CNPJ inválido."),
+    .max(MAX_TEXT_FIELD_LENGTH, "CPF/CNPJ inválido.")
+    .transform((value) => value.replace(/\D/g, "")),
   name: z
     .string()
     .trim()
