@@ -7,6 +7,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   ja_revisado: "Esse comprovante já tinha sido revisado (por outra aba ou outro admin).",
   excede_total:
     "Aprovar esse valor faria o total pago passar do valor do serviço. Rejeite ou confira os outros pagamentos pendentes desse mesmo serviço antes.",
+  motivo_muito_longo: "O motivo da rejeição é longo demais (máximo 191 caracteres).",
 };
 
 const SUCCESS_MESSAGES: Record<string, string> = {

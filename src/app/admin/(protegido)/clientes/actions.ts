@@ -26,11 +26,30 @@ export type CreateClientFormState = {
   created: { id: number; docNumber: string; name: string; password: string } | null;
 };
 
+// Limite de 191 caracteres em todo campo de texto livre bate com o
+// VARCHAR(191) real das colunas (padrão do Prisma pra MySQL — ver
+// migration.sql). Sem isso, um texto maior passava pela validação e só
+// quebrava na hora de gravar, com um erro cru do banco em vez de uma
+// mensagem que faça sentido pra quem preencheu o formulário.
+const MAX_TEXT_FIELD_LENGTH = 191;
+
 const createClientSchema = z.object({
-  docNumber: z.string().trim().min(1, "Informe o CPF ou CNPJ."),
-  name: z.string().trim().min(1, "Informe o nome."),
-  phone: z.string().trim().min(1, "Informe o telefone."),
-  email: z.string().trim(),
+  docNumber: z
+    .string()
+    .trim()
+    .min(1, "Informe o CPF ou CNPJ.")
+    .max(MAX_TEXT_FIELD_LENGTH, "CPF/CNPJ inválido."),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Informe o nome.")
+    .max(MAX_TEXT_FIELD_LENGTH, "Nome muito longo (máximo 191 caracteres)."),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Informe o telefone.")
+    .max(MAX_TEXT_FIELD_LENGTH, "Telefone muito longo."),
+  email: z.string().trim().max(MAX_TEXT_FIELD_LENGTH, "E-mail muito longo."),
 });
 
 export async function createClientAction(
@@ -91,9 +110,17 @@ export async function createClientAction(
 
 const updateClientSchema = z.object({
   clientId: z.coerce.number().int().positive(),
-  name: z.string().trim().min(1, "Informe o nome."),
-  phone: z.string().trim().min(1, "Informe o telefone."),
-  email: z.string().trim(),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Informe o nome.")
+    .max(MAX_TEXT_FIELD_LENGTH, "Nome muito longo (máximo 191 caracteres)."),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Informe o telefone.")
+    .max(MAX_TEXT_FIELD_LENGTH, "Telefone muito longo."),
+  email: z.string().trim().max(MAX_TEXT_FIELD_LENGTH, "E-mail muito longo."),
 });
 
 // docNumber propositalmente não é editável aqui: é o login do cliente, e
@@ -169,7 +196,14 @@ export async function regeneratePasswordAction(
 // ---------------------------------------------------------------------------
 
 const serviceFieldsSchema = z.object({
-  description: z.string().trim().min(1, "Informe a descrição do serviço."),
+  description: z
+    .string()
+    .trim()
+    .min(1, "Informe a descrição do serviço.")
+    .max(
+      MAX_TEXT_FIELD_LENGTH,
+      "Descrição muito longa (máximo 191 caracteres).",
+    ),
   serviceDate: z.string().trim().min(1, "Informe a data do serviço."),
   dueDate: z.string().trim(),
 });

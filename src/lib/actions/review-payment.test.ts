@@ -179,6 +179,19 @@ describe("rejectPayment", () => {
     expect(unchanged?.status).toBe("AGUARDANDO_VALIDACAO");
   });
 
+  it("rejeita motivo maior que 191 caracteres (limite real da coluna no banco)", async () => {
+    const payment = await createPendingPayment(serviceId, clientId, "500.00");
+
+    const tooLong = await rejectPayment(payment.id, adminId, "a".repeat(192));
+    expect(tooLong).toBe("motivo_muito_longo");
+
+    const exactly191 = await rejectPayment(payment.id, adminId, "a".repeat(191));
+    expect(exactly191).toBe("ok");
+
+    const unchanged = await prisma.payment.findUnique({ where: { id: payment.id } });
+    expect(unchanged?.status).toBe("REJEITADO");
+  });
+
   it("rejeitar não bloqueia o cliente de tentar de novo (não conta no valor aprovado)", async () => {
     const payment = await createPendingPayment(serviceId, clientId, "500.00");
     await rejectPayment(payment.id, adminId, "Valor errado");

@@ -49,6 +49,7 @@ export async function rejectPaymentAction(formData: FormData) {
   const outcome = await rejectPayment(paymentId, admin.id, reason);
 
   if (outcome === "motivo_obrigatorio") redirect("/admin?erro=dados_invalidos");
+  if (outcome === "motivo_muito_longo") redirect("/admin?erro=motivo_muito_longo");
   if (outcome === "ja_revisado") redirect("/admin?erro=ja_revisado");
   revalidateEverything();
   redirect("/admin?sucesso=rejeitado");

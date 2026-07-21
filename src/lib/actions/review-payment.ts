@@ -72,7 +72,16 @@ export async function approvePayment(
   });
 }
 
-export type RejectPaymentOutcome = "ok" | "ja_revisado" | "motivo_obrigatorio";
+// Bate com o VARCHAR(191) real da coluna rejection_reason (padrão do
+// Prisma pra MySQL). Sem esse limite, um motivo maior passava até aqui
+// e só quebrava na hora de gravar, com um erro cru do banco.
+const MAX_REJECTION_REASON_LENGTH = 191;
+
+export type RejectPaymentOutcome =
+  | "ok"
+  | "ja_revisado"
+  | "motivo_obrigatorio"
+  | "motivo_muito_longo";
 
 export async function rejectPayment(
   paymentId: number,
@@ -81,6 +90,9 @@ export async function rejectPayment(
 ): Promise<RejectPaymentOutcome> {
   const trimmedReason = reason.trim();
   if (trimmedReason.length === 0) return "motivo_obrigatorio";
+  if (trimmedReason.length > MAX_REJECTION_REASON_LENGTH) {
+    return "motivo_muito_longo";
+  }
 
   return prisma.$transaction(async (tx): Promise<RejectPaymentOutcome> => {
     const payment = await tx.payment.findUnique({ where: { id: paymentId } });
