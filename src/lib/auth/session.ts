@@ -20,6 +20,29 @@ function hashSessionToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
+// Apaga sessões já expiradas — nenhuma delas autentica mais ninguém
+// (readSession já rejeita pelo expiresAt), então isso é só limpeza de
+// linha morta, nunca urgente. Separada da probabilidade de disparo
+// (abaixo) pra poder testar a exclusão em si sem depender de sorte no
+// Math.random().
+export async function sweepExpiredSessions(): Promise<number> {
+  const result = await prisma.session.deleteMany({
+    where: { expiresAt: { lt: new Date() } },
+  });
+  return result.count;
+}
+
+// 1% de chance a cada sessão criada — mesmo padrão já usado pro rate
+// limit em memória antes da troca pro Redis. Sem cron nem endpoint
+// dedicado: sessão é criada toda vez que alguém loga, e login acontece
+// com frequência suficiente pra isso não deixar a tabela crescer sem
+// limite, sem precisar de infra extra pro tamanho desse app.
+async function maybeSweepExpiredSessions() {
+  if (Math.random() < 0.01) {
+    await sweepExpiredSessions();
+  }
+}
+
 async function createSession(
   actorType: "CLIENT" | "ADMIN",
   actorId: number,
@@ -37,6 +60,8 @@ async function createSession(
       expiresAt,
     },
   });
+
+  await maybeSweepExpiredSessions();
 
   const cookieStore = await cookies();
   cookieStore.set(cookieName, token, {

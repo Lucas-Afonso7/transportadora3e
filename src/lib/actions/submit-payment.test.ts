@@ -256,4 +256,34 @@ describe("submitPayment", () => {
     });
     expect(auditLogs).toHaveLength(1);
   });
+
+  it("com um pagamento rejeitado antes no mesmo serviço, o próximo envio vira REENVIADO no audit log", async () => {
+    await prisma.payment.create({
+      data: {
+        serviceId,
+        clientId,
+        amount: "200.00",
+        method: "DINHEIRO",
+        status: "REJEITADO",
+        rejectionReason: "Comprovante ilegível",
+      },
+    });
+
+    const result = await submitPayment({
+      clientId,
+      serviceId,
+      method: "DINHEIRO",
+      amountRaw: "200.00",
+      proofFile: null,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    const auditLogs = await prisma.auditLog.findMany({
+      where: { paymentId: result.paymentId },
+    });
+    expect(auditLogs).toHaveLength(1);
+    expect(auditLogs[0].action).toBe("REENVIADO");
+  });
 });

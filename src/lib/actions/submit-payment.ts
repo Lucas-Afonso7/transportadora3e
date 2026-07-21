@@ -52,6 +52,15 @@ export async function submitPayment(
     return { ok: false, error: "Serviço não encontrado." };
   }
 
+  // Se já existe algum pagamento rejeitado nesse serviço, esse envio é
+  // um reenvio — o cliente tentando de novo depois de ter sido barrado
+  // — não uma tentativa "do zero". O audit log distingue os dois casos
+  // (ação REENVIADO em vez de CRIADO) pro admin entender o histórico
+  // sem precisar cruzar isso manualmente.
+  const isResubmission = service.payments.some(
+    (payment) => payment.status === "REJEITADO",
+  );
+
   const remaining = computeRemainingAmount(
     service.totalAmount,
     service.payments,
@@ -130,7 +139,7 @@ export async function submitPayment(
           data: {
             paymentId: payment.id,
             actorType: "CLIENT",
-            action: "CRIADO",
+            action: isResubmission ? "REENVIADO" : "CRIADO",
             statusAfter: "AGUARDANDO_VALIDACAO",
             amountAfter: amount,
           },
@@ -169,7 +178,7 @@ export async function submitPayment(
         data: {
           paymentId: payment.id,
           actorType: "CLIENT",
-          action: "CRIADO",
+          action: isResubmission ? "REENVIADO" : "CRIADO",
           statusAfter: "AGUARDANDO_VALIDACAO",
           amountAfter: amount,
         },

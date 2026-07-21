@@ -31,6 +31,7 @@ import {
   destroyClientSession,
   getAdminSession,
   getClientSession,
+  sweepExpiredSessions,
 } from "./session";
 
 // Nomes reais definidos em session.ts — não exportados, então fixados aqui
@@ -153,5 +154,26 @@ describe("session", () => {
 
     expect(await getAdminSession()).toBeNull();
     expect((await getClientSession())?.id).toBe(clientId);
+  });
+
+  it("sweepExpiredSessions apaga só as sessões já expiradas, preserva as válidas", async () => {
+    await createClientSession(clientId);
+    await createAdminSession(adminId);
+
+    const clientSession = await prisma.session.findFirstOrThrow({
+      where: { clientId },
+    });
+    await prisma.session.update({
+      where: { id: clientSession.id },
+      data: { expiresAt: new Date(Date.now() - 1000) },
+    });
+    // sessão do admin continua válida (expiresAt no futuro, como
+    // createAdminSession já deixou)
+
+    const deletedCount = await sweepExpiredSessions();
+
+    expect(deletedCount).toBeGreaterThanOrEqual(1);
+    expect(await prisma.session.count({ where: { clientId } })).toBe(0);
+    expect(await prisma.session.count({ where: { adminId } })).toBe(1);
   });
 });
