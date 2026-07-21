@@ -15,6 +15,7 @@ export type FinancialOverview = {
 export type ClientFinancialRow = {
   clientId: number;
   clientName: string;
+  clientDocNumber: string;
   totalContratado: string;
   totalPago: string;
   totalPendente: string;
@@ -35,6 +36,7 @@ export async function getFinancialOverview(): Promise<{
     select: {
       id: true,
       name: true,
+      docNumber: true,
       services: {
         select: {
           totalAmount: true,
@@ -86,6 +88,7 @@ export async function getFinancialOverview(): Promise<{
       porCliente.push({
         clientId: client.id,
         clientName: client.name,
+        clientDocNumber: client.docNumber,
         totalContratado: clienteContratado.toString(),
         totalPago: clientePago.toString(),
         totalPendente: clientePendente.toString(),
