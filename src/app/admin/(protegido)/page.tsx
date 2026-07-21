@@ -1,6 +1,9 @@
+import { PackageCheck } from "lucide-react";
 import { requireAdminSession } from "@/lib/auth/session";
 import { getPendingReviewQueue } from "@/lib/data/admin-review-queue";
 import { ReviewQueueItem } from "@/components/admin/ReviewQueueItem";
+import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const ERROR_MESSAGES: Record<string, string> = {
   dados_invalidos: "Dados inválidos.",
@@ -27,7 +30,7 @@ export default async function AdminDashboardPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-fg">
+        <h1 className="font-display text-2xl text-fg">
           Olá, {admin.name.split(" ")[0]}
         </h1>
         <p className="mt-1 text-sm text-fg-muted">
@@ -46,29 +49,25 @@ export default async function AdminDashboardPage({
         </p>
       )}
 
-      <div
-        className={`rounded-card border p-5 shadow-card ${
-          queue.length > 0
-            ? "border-warning-500 bg-warning-tint"
-            : "border-border bg-surface"
-        }`}
-      >
+      <Card tone={queue.length > 0 ? "warning" : "default"} padding="lg">
         <p className="text-xs font-medium uppercase tracking-wide text-fg-muted">
           Pendentes de validação
         </p>
         <p
-          className={`mt-1 text-4xl font-semibold ${
+          className={`font-display mt-1 text-4xl ${
             queue.length > 0 ? "text-warning-tint-fg" : "text-fg"
           }`}
         >
           {queue.length}
         </p>
-      </div>
+      </Card>
 
       {queue.length === 0 ? (
-        <p className="text-sm text-fg-muted">
-          Nenhum comprovante pendente no momento. Tudo em dia.
-        </p>
+        <EmptyState
+          icon={PackageCheck}
+          title="Nenhum comprovante pendente no momento"
+          description="Tudo em dia — novos envios aparecem aqui automaticamente."
+        />
       ) : (
         // Grid a partir de telas médias: essa é a tela mais usada no dia a
         // dia, num PC com espaço de sobra — empilhar em coluna única (como

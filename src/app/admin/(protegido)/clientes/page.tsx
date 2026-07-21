@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Users } from "lucide-react";
 import { requireAdminSession } from "@/lib/auth/session";
 import { getAllClients } from "@/lib/data/admin-clients";
 import { ClientesTable } from "@/components/admin/ClientesTable";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const ERROR_MESSAGES: Record<string, string> = {
   dados_invalidos: "Dados inválidos.",
@@ -21,7 +23,7 @@ export default async function ClientesPage({
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-fg">Clientes</h1>
+          <h1 className="font-display text-2xl text-fg">Clientes</h1>
           <p className="mt-1 text-sm text-fg-muted">
             {clients.length} cliente{clients.length === 1 ? "" : "s"}{" "}
             cadastrado{clients.length === 1 ? "" : "s"}.
@@ -42,7 +44,11 @@ export default async function ClientesPage({
       )}
 
       {clients.length === 0 ? (
-        <p className="text-sm text-fg-muted">Nenhum cliente cadastrado ainda.</p>
+        <EmptyState
+          icon={Users}
+          title="Nenhum cliente cadastrado ainda"
+          description='Clique em "Novo Cliente" para cadastrar o primeiro.'
+        />
       ) : (
         <ClientesTable clients={clients} />
       )}

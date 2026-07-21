@@ -6,6 +6,7 @@ import { updateClientAction } from "../actions";
 import { RegeneratePasswordButton } from "@/components/admin/RegeneratePasswordButton";
 import { ServiceRow } from "@/components/admin/ServiceRow";
 import { AddServiceForm } from "@/components/admin/AddServiceForm";
+import { Card } from "@/components/ui/Card";
 
 const ERROR_MESSAGES: Record<string, string> = {
   dados_invalidos: "Dados inválidos.",
@@ -52,8 +53,8 @@ export default async function ClienteDetailPage({
         ← Clientes
       </Link>
 
-      <h1 className="mb-1 text-2xl font-bold text-fg">{client.name}</h1>
-      <p className="mb-6 text-sm text-fg-muted">{client.docNumber}</p>
+      <h1 className="font-display mb-1 text-2xl text-fg">{client.name}</h1>
+      <p className="font-mono mb-6 text-sm text-fg-muted">{client.docNumber}</p>
 
       {sucesso && SUCCESS_MESSAGES[sucesso] && (
         <p className="mb-6 rounded-control bg-brand-tint px-4 py-3 text-sm font-medium text-brand-tint-fg">
@@ -67,8 +68,8 @@ export default async function ClienteDetailPage({
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-card border border-border bg-surface p-5 shadow-card">
-          <h2 className="mb-3 text-sm font-semibold text-fg">
+        <Card padding="lg">
+          <h2 className="font-display mb-3 text-sm text-fg">
             Dados do cliente
           </h2>
           <form action={updateClientAction} className="space-y-3">
@@ -119,19 +120,22 @@ export default async function ClienteDetailPage({
               Salvar
             </button>
           </form>
-        </div>
+        </Card>
 
-        <div className="rounded-card border border-border bg-surface p-5 shadow-card">
-          <h2 className="mb-3 text-sm font-semibold text-fg">Acesso</h2>
+        <Card padding="lg">
+          <h2 className="font-display mb-3 text-sm text-fg">Acesso</h2>
           <p className="mb-3 text-sm text-fg-muted">
-            Login: <span className="font-medium text-fg">{client.docNumber}</span>
+            Login:{" "}
+            <span className="font-mono font-medium text-fg">
+              {client.docNumber}
+            </span>
           </p>
           <RegeneratePasswordButton clientId={client.id} />
-        </div>
+        </Card>
       </div>
 
       <div className="mt-8">
-        <h2 className="mb-3 text-base font-semibold text-fg">
+        <h2 className="font-display mb-3 text-base text-fg">
           Serviços contratados
         </h2>
         <div className="space-y-3">

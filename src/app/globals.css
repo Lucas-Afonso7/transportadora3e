@@ -19,30 +19,40 @@
   --color-ink-900: #14171a;
   --color-ink-950: #0b0d0f;
 
-  /* Marca — verde grafite profundo (confiança/dinheiro), sem gradiente roxo/azul */
-  --color-brand-50: #f2faf5;
-  --color-brand-100: #e1f2e8;
-  --color-brand-200: #bfe0cf;
-  --color-brand-300: #7cbe9e;
-  --color-brand-400: #3d9770;
-  --color-brand-500: #1b7a57;
-  --color-brand-600: #146349;
-  --color-brand-700: #0f4d3b;
-  --color-brand-800: #0a3a2d;
-  --color-brand-900: #06281f;
+  /* Marca — "Rota": o laranja do sol/globo da logo real da 3E (estrada
+     tracejada contornando o planeta). Nada de verde corporativo genérico
+     nem azul/roxo de dashboard — é literalmente a cor da identidade
+     visual que já existe. */
+  --color-brand-50: #fcf0ea;
+  --color-brand-100: #f8ddce;
+  --color-brand-200: #efb999;
+  --color-brand-300: #e38f65;
+  --color-brand-400: #de723f;
+  --color-brand-500: #d9552e;
+  --color-brand-600: #bc441f;
+  --color-brand-700: #983617;
+  --color-brand-800: #742911;
+  --color-brand-900: #4e1b0b;
 
-  /* Status de pagamento */
-  --color-warning-50: #fef6e7;
-  --color-warning-500: #b45309;
-  --color-warning-700: #7c3a05;
+  /* Asfalto — cinza secundário (do hemisfério cinza da logo), separado
+     da escala "ink": usado no trilho vazio do indicador de rota
+     (RouteStatus) e em acentos neutros que não devem competir com a marca. */
+  --color-asfalto: #a39a8e;
 
-  --color-danger-50: #fdecec;
-  --color-danger-500: #b42318;
-  --color-danger-700: #7a170f;
+  /* Status de pagamento — "Sinaleira" (aviso, dourado de sinalização),
+     "Pare" (erro, vermelho mais frio que a marca pra nunca ser confundido
+     com ela) e "Trajeto" (informativo, único tom frio da paleta). */
+  --color-warning-50: #faf1de;
+  --color-warning-500: #a8710f;
+  --color-warning-700: #7a5209;
 
-  --color-info-50: #eef2f9;
-  --color-info-500: #33507a;
-  --color-info-700: #23385a;
+  --color-danger-50: #faebe9;
+  --color-danger-500: #a3312a;
+  --color-danger-700: #7a211b;
+
+  --color-info-50: #eaf0f4;
+  --color-info-500: #3c5871;
+  --color-info-700: #293e52;
 
   /* Superfícies semânticas — cada componente usa bg-page/bg-surface/
      text-fg/etc. em vez de ink-50/white/ink-900 direto, então o tema
@@ -80,14 +90,16 @@
   --color-fg-muted: var(--color-ink-400);
   --color-fg-subtle: var(--color-ink-500);
 
-  --color-brand-tint: #10402f;
-  --color-brand-tint-fg: #86cba7;
-  --color-warning-tint: #4a2c05;
-  --color-warning-tint-fg: #f0b968;
-  --color-danger-tint: #451512;
-  --color-danger-tint-fg: #f2a39c;
-  --color-info-tint: #1c2c48;
-  --color-info-tint-fg: #a9bfe0;
+  --color-asfalto: #6b6259;
+
+  --color-brand-tint: #3a2216;
+  --color-brand-tint-fg: #f0a87e;
+  --color-warning-tint: #362a12;
+  --color-warning-tint-fg: #e0b354;
+  --color-danger-tint: #3b1815;
+  --color-danger-tint-fg: #e8998f;
+  --color-info-tint: #1c2a34;
+  --color-info-tint-fg: #9db9cc;
 }
 
 @theme inline {
@@ -113,6 +125,8 @@
   --color-brand-700: var(--color-brand-700);
   --color-brand-800: var(--color-brand-800);
   --color-brand-900: var(--color-brand-900);
+
+  --color-asfalto: var(--color-asfalto);
 
   --color-warning-50: var(--color-warning-50);
   --color-warning-500: var(--color-warning-500);
@@ -144,12 +158,17 @@
   --color-info-tint: var(--color-info-tint);
   --color-info-tint-fg: var(--color-info-tint-fg);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Duas famílias, papéis fixos (ver plano de design): Oswald pra título/
+     rótulo/navegação (condensada, evoca placa de rodovia); Plex Sans pro
+     corpo; Plex Mono só onde dígito precisa alinhar em coluna (valor,
+     CPF/CNPJ, data) — como um comprovante impresso. */
+  --font-sans: var(--font-plex-sans);
+  --font-display: var(--font-oswald);
+  --font-mono: var(--font-plex-mono);
 
   /* Espaçamento e raio padronizados — usados em cards, inputs e botões
      em vez de valores "no olho" espalhados pelos componentes */
-  --radius-card: 0.875rem;
+  --radius-card: 0.75rem;
   --radius-control: 0.5rem;
   --spacing-page-x: 1.5rem;
   --shadow-card: 0 1px 2px rgba(11, 13, 15, 0.04), 0 1px 12px rgba(11, 13, 15, 0.05);

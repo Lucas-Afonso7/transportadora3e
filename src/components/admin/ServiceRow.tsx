@@ -2,6 +2,7 @@ import { formatBRL, formatDate } from "@/lib/format";
 import type { ClientServiceSummary } from "@/lib/data/client-dashboard";
 import { ServiceStatusBadge } from "@/components/dashboard/StatusBadge";
 import { updateServiceAction } from "@/app/admin/(protegido)/clientes/actions";
+import { Card } from "@/components/ui/Card";
 
 function toDateInputValue(date: Date | null): string {
   if (!date) return "";
@@ -10,7 +11,7 @@ function toDateInputValue(date: Date | null): string {
 
 export function ServiceRow({ service }: { service: ClientServiceSummary }) {
   return (
-    <div className="rounded-card border border-border bg-surface p-4 shadow-card">
+    <Card>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium text-fg">{service.description}</p>
@@ -19,25 +20,29 @@ export function ServiceRow({ service }: { service: ClientServiceSummary }) {
             {service.dueDate && ` · vence em ${formatDate(service.dueDate)}`}
           </p>
         </div>
-        <ServiceStatusBadge status={service.status} />
+        <ServiceStatusBadge
+          status={service.status}
+          paidAmount={service.paidAmount}
+          totalAmount={service.totalAmount}
+        />
       </div>
 
       <div className="mt-3 grid grid-cols-3 gap-2 border-t border-border-muted pt-3 text-sm">
         <div>
           <p className="text-fg-muted">Total</p>
-          <p className="font-medium text-fg">
+          <p className="font-mono font-medium text-fg">
             {formatBRL(service.totalAmount)}
           </p>
         </div>
         <div>
           <p className="text-fg-muted">Pago</p>
-          <p className="font-medium text-brand-700 dark:text-brand-400">
+          <p className="font-mono font-medium text-brand-700 dark:text-brand-400">
             {formatBRL(service.paidAmount)}
           </p>
         </div>
         <div>
           <p className="text-fg-muted">Em aberto</p>
-          <p className="font-medium text-warning-700 dark:text-warning-500">
+          <p className="font-mono font-medium text-warning-700 dark:text-warning-500">
             {formatBRL(service.remainingAmount)}
           </p>
         </div>
@@ -79,7 +84,7 @@ export function ServiceRow({ service }: { service: ClientServiceSummary }) {
                 min="0.01"
                 defaultValue={service.totalAmount}
                 required
-                className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+                className="font-mono w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
               {Number(service.paidAmount) > 0 && (
                 <p className="mt-1 text-xs text-fg-subtle">
@@ -122,6 +127,6 @@ export function ServiceRow({ service }: { service: ClientServiceSummary }) {
           </button>
         </form>
       </details>
-    </div>
+    </Card>
   );
 }

@@ -1,3 +1,4 @@
+import { PackageCheck } from "lucide-react";
 import { requireClientSession } from "@/lib/auth/session";
 import { getClientServiceSummaries } from "@/lib/data/client-dashboard";
 import { categorizePainelService } from "@/lib/service-status";
@@ -33,7 +34,7 @@ export default async function EmAbertoPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-fg">Em Aberto</h1>
+      <h1 className="font-display text-2xl text-fg">Em Aberto</h1>
       <p className="mt-1 text-sm text-fg-muted">
         {filtro && FILTER_LABEL[filtro]
           ? `Filtrando por: ${FILTER_LABEL[filtro]}`
@@ -44,6 +45,7 @@ export default async function EmAbertoPage({
         <ServicesTable
           services={filtered}
           emptyMessage="Nenhum serviço em aberto — tudo pago!"
+          emptyIcon={PackageCheck}
         />
       </div>
     </div>

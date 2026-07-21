@@ -1,8 +1,11 @@
 import { createServiceAction } from "@/app/admin/(protegido)/clientes/actions";
 
+// <details> não pode usar o componente <Card> (que renderiza <div>/<Link>),
+// mas replica a mesma linguagem visual (borda superior fina, tom brand —
+// é uma ação, não conteúdo passivo).
 export function AddServiceForm({ clientId }: { clientId: number }) {
   return (
-    <details className="rounded-card border border-border bg-surface p-4 shadow-card">
+    <details className="rounded-card border border-border border-t-2 border-t-brand-500 bg-surface p-4 shadow-card">
       <summary className="cursor-pointer text-sm font-medium text-brand-700 dark:text-brand-400">
         + Adicionar serviço
       </summary>
@@ -34,7 +37,7 @@ export function AddServiceForm({ clientId }: { clientId: number }) {
               step="0.01"
               min="0.01"
               required
-              className="w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+              className="font-mono w-full rounded-control border border-border bg-page px-3 py-2 text-sm text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
             />
           </div>
           <div>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { submitPaymentAction, type PaymentFormState } from "./actions";
 import { formatBRL } from "@/lib/format";
 import { MAX_PROOF_SIZE_BYTES } from "@/lib/uploads";
+import { Card } from "@/components/ui/Card";
 
 type Method = "PIX" | "DINHEIRO";
 
@@ -49,13 +50,13 @@ export function PaymentForm({
         ← Voltar
       </Link>
 
-      <div className="rounded-card border border-border bg-surface p-4 shadow-card">
+      <Card>
         <p className="text-sm text-fg-muted">{service.description}</p>
-        <p className="mt-1 text-2xl font-semibold text-fg">
+        <p className="font-mono mt-1 text-2xl font-semibold text-fg">
           {formatBRL(service.remainingAmount)}
         </p>
         <p className="text-sm text-fg-muted">falta pagar</p>
-      </div>
+      </Card>
 
       <form action={formAction} className="mt-4 space-y-4">
         <input type="hidden" name="serviceId" value={service.id} />
@@ -78,7 +79,7 @@ export function PaymentForm({
             max={service.remainingAmount}
             defaultValue={service.remainingAmount}
             required
-            className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-lg text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+            className="font-mono w-full rounded-control border border-border bg-page px-3 py-2.5 text-lg text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
           />
           <p className="mt-1 text-xs text-fg-muted">
             Pode ser o valor total ou parcial — até{" "}
@@ -123,7 +124,7 @@ export function PaymentForm({
                 Chave Pix
               </p>
               <div className="mt-1 flex items-center justify-between gap-2">
-                <span className="break-all text-sm font-medium text-fg">
+                <span className="font-mono break-all text-sm font-medium text-fg">
                   {businessProfile.pixKey}
                 </span>
                 <button

@@ -28,7 +28,7 @@ export default async function PainelLayout({
               className="rounded"
             />
             <div>
-              <span className="block text-xs font-medium uppercase tracking-wide text-brand-600 dark:text-brand-400">
+              <span className="font-display block text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                 Transportadora 3E
               </span>
               <p className="text-sm text-fg-muted">Olá, {client.name}</p>

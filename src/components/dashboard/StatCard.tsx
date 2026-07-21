@@ -1,12 +1,19 @@
-import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import { Card, type CardTone } from "@/components/ui/Card";
 
-const TONE_STYLES = {
+const TONE_ICON: Record<string, string> = {
   ink: "text-fg-muted",
   danger: "text-danger-500",
   warning: "text-warning-500",
   brand: "text-brand-500",
-} as const;
+};
+
+const TONE_CARD: Record<string, CardTone> = {
+  ink: "default",
+  danger: "danger",
+  warning: "warning",
+  brand: "brand",
+};
 
 export function StatCard({
   href,
@@ -19,16 +26,13 @@ export function StatCard({
   icon: LucideIcon;
   label: string;
   value: number;
-  tone?: keyof typeof TONE_STYLES;
+  tone?: keyof typeof TONE_ICON;
 }) {
   return (
-    <Link
-      href={href}
-      className="block rounded-card border border-border bg-surface p-4 shadow-card transition-shadow hover:shadow-md"
-    >
-      <Icon className={`mb-3 h-6 w-6 ${TONE_STYLES[tone]}`} strokeWidth={1.75} />
+    <Card href={href} tone={TONE_CARD[tone]}>
+      <Icon className={`mb-3 h-6 w-6 ${TONE_ICON[tone]}`} strokeWidth={1.75} />
       <p className="text-sm text-fg-muted">{label}</p>
-      <p className="mt-0.5 text-2xl font-semibold text-fg">{value}</p>
-    </Link>
+      <p className="mt-0.5 font-display text-2xl text-fg">{value}</p>
+    </Card>
   );
 }

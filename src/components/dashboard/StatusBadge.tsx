@@ -1,46 +1,54 @@
+import { RouteStatus, type RouteStatusVariant } from "@/components/ui/RouteStatus";
+
 type ServiceStatus = "PENDENTE" | "PARCIAL" | "PAGO";
 type PaymentStatus = "AGUARDANDO_VALIDACAO" | "APROVADO" | "REJEITADO";
 
-const SERVICE_LABEL: Record<ServiceStatus, string> = {
-  PENDENTE: "Pendente",
-  PARCIAL: "Parcial",
-  PAGO: "Pago",
+const SERVICE_VARIANT: Record<ServiceStatus, RouteStatusVariant> = {
+  PENDENTE: "pendente",
+  PARCIAL: "parcial",
+  PAGO: "pago",
 };
 
-const PAYMENT_LABEL: Record<PaymentStatus, string> = {
-  AGUARDANDO_VALIDACAO: "Aguardando validação",
-  APROVADO: "Aprovado",
-  REJEITADO: "Rejeitado",
+const PAYMENT_VARIANT: Record<PaymentStatus, RouteStatusVariant> = {
+  AGUARDANDO_VALIDACAO: "pendente",
+  APROVADO: "pago",
+  REJEITADO: "rejeitado",
 };
 
-// Mesmas cores nos dois badges pra status equivalentes (pago = aprovado,
-// pendente/parcial = aguardando, rejeitado = danger) — o cliente não deve
-// aprender dois vocabulários visuais diferentes pro mesmo conceito.
-const STYLE: Record<ServiceStatus | PaymentStatus, string> = {
-  PENDENTE: "bg-warning-tint text-warning-tint-fg",
-  PARCIAL: "bg-info-tint text-info-tint-fg",
-  PAGO: "bg-brand-tint text-brand-tint-fg",
-  AGUARDANDO_VALIDACAO: "bg-info-tint text-info-tint-fg",
-  APROVADO: "bg-brand-tint text-brand-tint-fg",
-  REJEITADO: "bg-danger-tint text-danger-tint-fg",
-};
+export function ServiceStatusBadge({
+  status,
+  paidAmount,
+  totalAmount,
+  size = "full",
+}: {
+  status: ServiceStatus;
+  /** Só pra desenhar o quanto da trilha já foi pavimentado — não influencia
+   *  nenhuma decisão de negócio (o status em si já vem calculado do
+   *  servidor com Decimal, em computeRemainingAmount/service-status). */
+  paidAmount?: string;
+  totalAmount?: string;
+  size?: "full" | "compact";
+}) {
+  const progress =
+    paidAmount && totalAmount && Number(totalAmount) > 0
+      ? (Number(paidAmount) / Number(totalAmount)) * 100
+      : undefined;
 
-export function ServiceStatusBadge({ status }: { status: ServiceStatus }) {
   return (
-    <span
-      className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${STYLE[status]}`}
-    >
-      {SERVICE_LABEL[status]}
-    </span>
+    <RouteStatus
+      variant={SERVICE_VARIANT[status]}
+      progress={progress}
+      size={size}
+    />
   );
 }
 
-export function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
-  return (
-    <span
-      className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${STYLE[status]}`}
-    >
-      {PAYMENT_LABEL[status]}
-    </span>
-  );
+export function PaymentStatusBadge({
+  status,
+  size = "full",
+}: {
+  status: PaymentStatus;
+  size?: "full" | "compact";
+}) {
+  return <RouteStatus variant={PAYMENT_VARIANT[status]} size={size} />;
 }

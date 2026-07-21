@@ -27,7 +27,7 @@ export function PainelNav() {
           <Link
             key={link.href}
             href={link.href}
-            className={`shrink-0 whitespace-nowrap rounded-control px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`font-display shrink-0 whitespace-nowrap rounded-control px-3 py-1.5 text-sm transition-colors ${
               isActive
                 ? "bg-brand-tint text-brand-tint-fg"
                 : "text-fg-muted hover:bg-surface-hover hover:text-fg"

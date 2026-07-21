@@ -29,7 +29,7 @@ export function AdminNav({ onNavigate }: { onNavigate?: () => void } = {}) {
             key={link.href}
             href={link.href}
             onClick={onNavigate}
-            className={`rounded-control px-3 py-2 text-sm font-medium transition-colors ${
+            className={`font-display rounded-control px-3 py-2 text-sm transition-colors ${
               isActive
                 ? "bg-brand-tint text-brand-tint-fg"
                 : "text-fg-muted hover:bg-surface-hover hover:text-fg"

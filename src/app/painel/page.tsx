@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, TriangleAlert, Clock, CircleCheck } from "lucide-react";
+import { FileText, TriangleAlert, Clock, CircleCheck, PackageCheck } from "lucide-react";
 import { requireClientSession } from "@/lib/auth/session";
 import {
   getClientServiceSummaries,
@@ -42,9 +42,7 @@ export default async function PainelPage({
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-fg">
-          Gestão de Pagamentos
-        </h1>
+        <h1 className="font-display text-2xl text-fg">Gestão de Pagamentos</h1>
         <p className="mt-1 text-sm text-fg-muted">
           Acompanhe seus serviços contratados e pagamentos com a
           Transportadora 3E.
@@ -97,9 +95,7 @@ export default async function PainelPage({
       </div>
 
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-fg">
-          Serviços em Aberto
-        </h2>
+        <h2 className="font-display text-base text-fg">Serviços em Aberto</h2>
         <Link
           href="/painel/em-aberto"
           className="rounded-control bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
@@ -111,6 +107,7 @@ export default async function PainelPage({
       <ServicesTable
         services={recentesEmAberto}
         emptyMessage="Nenhum serviço em aberto — tudo pago!"
+        emptyIcon={PackageCheck}
       />
 
       <Footer whatsappPhone={businessProfile.whatsappPhone} />

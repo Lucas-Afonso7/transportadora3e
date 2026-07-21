@@ -2,6 +2,7 @@ import { formatBRL, formatDateTime } from "@/lib/format";
 import type { ReviewQueueItem as ReviewQueueItemType } from "@/lib/data/admin-review-queue";
 import { approvePaymentAction } from "@/app/admin/(protegido)/actions";
 import { RejectButton } from "./RejectButton";
+import { Card } from "@/components/ui/Card";
 
 const METHOD_LABEL: Record<ReviewQueueItemType["method"], string> = {
   PIX: "Pix",
@@ -12,13 +13,15 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
   const isImage = item.proofMimeType?.startsWith("image/") ?? false;
 
   return (
-    <div className="rounded-card border border-border bg-surface p-4 shadow-card">
+    <Card>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium text-fg">{item.clientName}</p>
-          <p className="text-xs text-fg-muted">{item.clientDocNumber}</p>
+          <p className="font-mono text-xs text-fg-muted">
+            {item.clientDocNumber}
+          </p>
         </div>
-        <span className="text-xs text-fg-muted">
+        <span className="font-mono text-xs text-fg-muted">
           {formatDateTime(item.createdAt)}
         </span>
       </div>
@@ -29,7 +32,7 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
         <span className="text-sm text-fg-muted">
           {METHOD_LABEL[item.method]}
         </span>
-        <span className="font-semibold text-fg">
+        <span className="font-mono font-semibold text-fg">
           {formatBRL(item.amount)}
         </span>
       </div>
@@ -72,6 +75,6 @@ export function ReviewQueueItem({ item }: { item: ReviewQueueItemType }) {
         </form>
         <RejectButton paymentId={item.paymentId} />
       </div>
-    </div>
+    </Card>
   );
 }

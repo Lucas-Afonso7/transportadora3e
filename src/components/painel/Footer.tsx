@@ -2,12 +2,13 @@ import Image from "next/image";
 import { Phone, Mail, MapPin, Globe, MessageCircle } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { formatPhoneBR } from "@/lib/format";
+import { Card } from "@/components/ui/Card";
 
 export function Footer({ whatsappPhone }: { whatsappPhone: string }) {
   const whatsappLink = `https://wa.me/${whatsappPhone}`;
 
   return (
-    <div className="mt-10 rounded-card border border-border bg-surface p-6 shadow-card">
+    <Card padding="lg" className="mt-10">
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         <div className="flex items-center justify-center sm:justify-start">
           <Image
@@ -20,7 +21,7 @@ export function Footer({ whatsappPhone }: { whatsappPhone: string }) {
         </div>
 
         <div className="text-center sm:text-left">
-          <h3 className="mb-2 text-sm font-semibold text-fg">Contato</h3>
+          <h3 className="font-display mb-2 text-sm text-fg">Contato</h3>
           <p className="mb-1 flex items-center justify-center gap-2 text-sm text-fg-muted sm:justify-start">
             <Phone
               className="h-4 w-4 text-brand-600 dark:text-brand-400"
@@ -45,7 +46,7 @@ export function Footer({ whatsappPhone }: { whatsappPhone: string }) {
         </div>
 
         <div className="text-center sm:text-left">
-          <h3 className="mb-2 text-sm font-semibold text-fg">
+          <h3 className="font-display mb-2 text-sm text-fg">
             Redes sociais
           </h3>
           <div className="flex justify-center gap-4 sm:justify-start">
@@ -79,6 +80,6 @@ export function Footer({ whatsappPhone }: { whatsappPhone: string }) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

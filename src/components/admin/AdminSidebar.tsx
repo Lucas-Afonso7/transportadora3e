@@ -16,7 +16,7 @@ export function AdminSidebar({
 
   const header = (
     <div>
-      <span className="block text-xs font-medium uppercase tracking-wide text-brand-600 dark:text-brand-400">
+      <span className="font-display block text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
         Transportadora 3E · Admin
       </span>
       <p className="mt-1 text-sm text-fg-muted">Olá, {adminName}</p>
@@ -30,7 +30,7 @@ export function AdminSidebar({
           botão, mesmo padrão de colapso usado no resto do app pra nav
           que não cabe na largura da tela. */}
       <div className="flex items-center justify-between border-b border-border bg-surface px-page-x py-3 md:hidden">
-        <span className="text-sm font-semibold text-fg">
+        <span className="font-display text-sm text-fg">
           Transportadora 3E · Admin
         </span>
         <button

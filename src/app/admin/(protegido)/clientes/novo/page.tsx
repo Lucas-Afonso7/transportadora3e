@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { createClientAction, type CreateClientFormState } from "../actions";
+import { Card } from "@/components/ui/Card";
 
 const initialState: CreateClientFormState = { error: null, created: null };
 
@@ -18,11 +19,11 @@ export default function NovoClientePage() {
 
     return (
       <div className="mx-auto max-w-md">
-        <div className="rounded-card border border-brand-500/30 bg-brand-tint p-6 shadow-card">
-          <h1 className="text-lg font-semibold text-brand-tint-fg">
+        <Card tone="brand" padding="lg">
+          <h1 className="font-display text-lg text-brand-tint-fg">
             Cliente cadastrado
           </h1>
-          <p className="mt-1 text-sm text-brand-tint-fg">
+          <p className="font-mono mt-1 text-sm text-brand-tint-fg">
             {created.name} · {created.docNumber}
           </p>
 
@@ -67,7 +68,7 @@ export default function NovoClientePage() {
               Cadastrar outro
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -81,95 +82,94 @@ export default function NovoClientePage() {
         ← Voltar
       </Link>
 
-      <h1 className="mb-4 text-xl font-bold text-fg">Novo Cliente</h1>
+      <h1 className="font-display mb-4 text-xl text-fg">Novo Cliente</h1>
 
-      <form
-        action={formAction}
-        className="space-y-4 rounded-card border border-border bg-surface p-6 shadow-card"
-      >
-        <div>
-          <label
-            htmlFor="docNumber"
-            className="mb-1.5 block text-sm font-medium text-fg-muted"
-          >
-            CPF ou CNPJ
-          </label>
-          <input
-            id="docNumber"
-            name="docNumber"
-            type="text"
-            required
-            className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
-          />
-        </div>
+      <Card padding="lg">
+        <form action={formAction} className="space-y-4">
+          <div>
+            <label
+              htmlFor="docNumber"
+              className="mb-1.5 block text-sm font-medium text-fg-muted"
+            >
+              CPF ou CNPJ
+            </label>
+            <input
+              id="docNumber"
+              name="docNumber"
+              type="text"
+              required
+              className="font-mono w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="name"
-            className="mb-1.5 block text-sm font-medium text-fg-muted"
-          >
-            Nome
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
-          />
-        </div>
+          <div>
+            <label
+              htmlFor="name"
+              className="mb-1.5 block text-sm font-medium text-fg-muted"
+            >
+              Nome
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="phone"
-            className="mb-1.5 block text-sm font-medium text-fg-muted"
-          >
-            Telefone / WhatsApp
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            type="text"
-            required
-            placeholder="31999999999"
-            className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
-          />
-        </div>
+          <div>
+            <label
+              htmlFor="phone"
+              className="mb-1.5 block text-sm font-medium text-fg-muted"
+            >
+              Telefone / WhatsApp
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="text"
+              required
+              placeholder="31999999999"
+              className="font-mono w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1.5 block text-sm font-medium text-fg-muted"
-          >
-            E-mail (opcional)
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
-          />
-        </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-1.5 block text-sm font-medium text-fg-muted"
+            >
+              E-mail (opcional)
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
+            />
+          </div>
 
-        {state.error && (
-          <p className="rounded-control bg-danger-tint px-3 py-2 text-sm text-danger-tint-fg">
-            {state.error}
+          {state.error && (
+            <p className="rounded-control bg-danger-tint px-3 py-2 text-sm text-danger-tint-fg">
+              {state.error}
+            </p>
+          )}
+
+          <p className="text-xs text-fg-muted">
+            Uma senha de acesso é gerada automaticamente ao salvar — você vai
+            poder copiá-la na próxima tela pra repassar ao cliente.
           </p>
-        )}
 
-        <p className="text-xs text-fg-muted">
-          Uma senha de acesso é gerada automaticamente ao salvar — você vai
-          poder copiá-la na próxima tela pra repassar ao cliente.
-        </p>
-
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full rounded-control bg-brand-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-brand-700 disabled:opacity-60"
-        >
-          {isPending ? "Cadastrando…" : "Cadastrar cliente"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="w-full rounded-control bg-brand-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-brand-700 disabled:opacity-60"
+          >
+            {isPending ? "Cadastrando…" : "Cadastrar cliente"}
+          </button>
+        </form>
+      </Card>
     </div>
   );
 }

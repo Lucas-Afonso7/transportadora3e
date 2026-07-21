@@ -1,17 +1,29 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Oswald } from "next/font/google";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Duas famílias, papéis fixos (ver plano de design): Oswald é a
+// condensada de título/rótulo/navegação — evoca placa de sinalização de
+// rodovia; Plex Sans é o corpo; Plex Mono só entra em número que precisa
+// alinhar em coluna (valor, CPF/CNPJ, data), como um comprovante impresso.
+const oswald = Oswald({
+  variable: "--font-oswald",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -33,7 +45,7 @@ export default async function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${oswald.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
       // O ThemeInitScript adiciona/remove "dark" nesse elemento antes do
       // React hidratar, de propósito (é o que evita o flash do tema
       // errado). Isso sempre vai divergir do que o servidor renderizou —
@@ -44,7 +56,7 @@ export default async function RootLayout({
       <head>
         <ThemeInitScript nonce={nonce} />
       </head>
-      <body className="flex min-h-full flex-col bg-page text-fg">
+      <body className="flex min-h-full flex-col bg-page font-sans text-fg">
         {children}
       </body>
     </html>
