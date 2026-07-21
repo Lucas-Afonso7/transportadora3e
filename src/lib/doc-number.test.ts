@@ -2,14 +2,32 @@ import { describe, expect, it } from "vitest";
 import { isValidDocNumberFormat } from "./doc-number";
 
 describe("isValidDocNumberFormat", () => {
-  it("aceita CPF com 11 dígitos, formatado ou não", () => {
-    expect(isValidDocNumberFormat("123.456.789-01")).toBe(true);
-    expect(isValidDocNumberFormat("12345678901")).toBe(true);
+  it("aceita CPF com dígito verificador válido, formatado ou não", () => {
+    expect(isValidDocNumberFormat("111.444.777-35")).toBe(true);
+    expect(isValidDocNumberFormat("11144477735")).toBe(true);
   });
 
-  it("aceita CNPJ com 14 dígitos, formatado ou não", () => {
-    expect(isValidDocNumberFormat("12.345.678/0001-90")).toBe(true);
-    expect(isValidDocNumberFormat("12345678000190")).toBe(true);
+  it("aceita CNPJ com dígito verificador válido, formatado ou não", () => {
+    expect(isValidDocNumberFormat("11.222.333/0001-81")).toBe(true);
+    expect(isValidDocNumberFormat("11222333000181")).toBe(true);
+  });
+
+  it("rejeita CPF com dígito verificador errado (mesmo tamanho certo)", () => {
+    // Mesmos 9 dígitos base de um CPF válido, só o último dígito
+    // verificador trocado — exatamente o typo mais comum de digitar.
+    expect(isValidDocNumberFormat("111.444.777-34")).toBe(false);
+    expect(isValidDocNumberFormat("11144477734")).toBe(false);
+  });
+
+  it("rejeita CNPJ com dígito verificador errado (mesmo tamanho certo)", () => {
+    expect(isValidDocNumberFormat("11.222.333/0001-80")).toBe(false);
+    expect(isValidDocNumberFormat("11222333000180")).toBe(false);
+  });
+
+  it("rejeita sequência de dígito repetido, mesmo quando a conta do dígito verificador fecha", () => {
+    expect(isValidDocNumberFormat("000.000.000-00")).toBe(false);
+    expect(isValidDocNumberFormat("111.111.111-11")).toBe(false);
+    expect(isValidDocNumberFormat("11.111.111/1111-11")).toBe(false);
   });
 
   it("rejeita quantidade de dígitos diferente de 11 ou 14", () => {
