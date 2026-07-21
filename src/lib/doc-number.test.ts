@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidDocNumberFormat } from "./doc-number";
+import { formatDocNumberInput, isValidDocNumberFormat } from "./doc-number";
 
 describe("isValidDocNumberFormat", () => {
   it("aceita CPF com dígito verificador válido, formatado ou não", () => {
@@ -34,5 +34,40 @@ describe("isValidDocNumberFormat", () => {
     expect(isValidDocNumberFormat("123")).toBe(false);
     expect(isValidDocNumberFormat("123456789012")).toBe(false);
     expect(isValidDocNumberFormat("")).toBe(false);
+  });
+});
+
+describe("formatDocNumberInput", () => {
+  it("formata progressivamente como CPF enquanto digita (até 11 dígitos)", () => {
+    expect(formatDocNumberInput("1")).toBe("1");
+    expect(formatDocNumberInput("11")).toBe("11");
+    expect(formatDocNumberInput("111")).toBe("111");
+    expect(formatDocNumberInput("1114")).toBe("111.4");
+    expect(formatDocNumberInput("111444777")).toBe("111.444.777");
+    expect(formatDocNumberInput("1114447773")).toBe("111.444.777-3");
+    expect(formatDocNumberInput("11144477735")).toBe("111.444.777-35");
+  });
+
+  it("formata um CPF colado de uma vez só, igual ao digitado", () => {
+    expect(formatDocNumberInput("11144477735")).toBe("111.444.777-35");
+  });
+
+  it("troca pro formato CNPJ a partir do 12º dígito", () => {
+    expect(formatDocNumberInput("112223330001")).toBe("11.222.333/0001");
+    expect(formatDocNumberInput("1122233300018")).toBe("11.222.333/0001-8");
+    expect(formatDocNumberInput("11222333000181")).toBe("11.222.333/0001-81");
+  });
+
+  it("ignora tudo que não é dígito (colar já formatado não duplica pontuação)", () => {
+    expect(formatDocNumberInput("111.444.777-35")).toBe("111.444.777-35");
+    expect(formatDocNumberInput("11.222.333/0001-81")).toBe(
+      "11.222.333/0001-81",
+    );
+  });
+
+  it("trunca em 14 dígitos", () => {
+    expect(formatDocNumberInput("112223330001819999")).toBe(
+      "11.222.333/0001-81",
+    );
   });
 });

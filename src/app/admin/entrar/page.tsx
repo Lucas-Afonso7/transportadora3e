@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { adminLoginAction } from "./actions";
 import { initialLoginState } from "@/lib/auth/form-state";
 import { Card } from "@/components/ui/Card";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export default function AdminEntrarPage() {
   const [state, formAction, isPending] = useActionState(
@@ -49,13 +50,10 @@ export default function AdminEntrarPage() {
               >
                 Senha
               </label>
-              <input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 autoComplete="current-password"
-                required
-                className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
             </div>
 

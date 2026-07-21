@@ -1,15 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { clientLoginAction } from "./actions";
 import { initialLoginState } from "@/lib/auth/form-state";
 import { Card } from "@/components/ui/Card";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { formatDocNumberInput } from "@/lib/doc-number";
 
 export default function EntrarPage() {
   const [state, formAction, isPending] = useActionState(
     clientLoginAction,
     initialLoginState,
   );
+  const [docNumber, setDocNumber] = useState("");
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-page px-page-x py-12">
@@ -39,6 +42,10 @@ export default function EntrarPage() {
                 inputMode="numeric"
                 autoComplete="username"
                 required
+                value={docNumber}
+                onChange={(e) =>
+                  setDocNumber(formatDocNumberInput(e.target.value))
+                }
                 className="font-mono w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
             </div>
@@ -50,13 +57,10 @@ export default function EntrarPage() {
               >
                 Senha
               </label>
-              <input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 autoComplete="current-password"
-                required
-                className="w-full rounded-control border border-border bg-page px-3 py-2.5 text-fg outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:focus:ring-brand-900"
               />
             </div>
 

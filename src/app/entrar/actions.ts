@@ -10,7 +10,14 @@ import { isRateLimited, getRequestIp } from "@/lib/auth/rate-limit";
 import type { LoginFormState } from "@/lib/auth/form-state";
 
 const loginSchema = z.object({
-  docNumber: z.string().trim().min(1, "Informe o CPF ou CNPJ."),
+  // O campo mostra CPF/CNPJ com pontuação (máscara em src/lib/doc-number.ts),
+  // mas o valor gravado em Client.docNumber é só dígitos — sem esse
+  // transform, o lookup abaixo nunca bateria com o que está no banco.
+  docNumber: z
+    .string()
+    .trim()
+    .min(1, "Informe o CPF ou CNPJ.")
+    .transform((value) => value.replace(/\D/g, "")),
   password: z.string().min(1, "Informe a senha."),
 });
 

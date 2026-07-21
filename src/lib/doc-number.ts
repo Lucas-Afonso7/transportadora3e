@@ -48,3 +48,26 @@ function isValidCNPJ(digits: string): boolean {
 
   return digits[12] === String(digit1) && digits[13] === String(digit2);
 }
+
+// Máscara progressiva pro campo de login: funciona digitando dígito a
+// dígito OU colando o número inteiro de uma vez (o React chama onChange
+// com o valor já colado — mesmo código formata os dois casos). Até 11
+// dígitos vira CPF (###.###.###-##); a partir do 12º dígito passa a
+// formatar como CNPJ (##.###.###/####-##), sem precisar saber de
+// antemão qual dos dois o cliente está digitando.
+export function formatDocNumberInput(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 14);
+
+  if (digits.length <= 11) {
+    return digits
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+
+  return digits
+    .replace(/(\d{2})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1/$2")
+    .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+}
