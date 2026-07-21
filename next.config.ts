@@ -7,6 +7,10 @@ import type { NextConfig } from "next";
 // roda em build/estático, sem acesso à requisição — quem monta e envia
 // a CSP é o src/proxy.ts, por requisição.
 const nextConfig: NextConfig = {
+  // Tira o header "X-Powered-By: Next.js" (vem ligado por padrão) — não
+  // é uma falha em si, mas não tem motivo pra anunciar de graça pra
+  // quem for reconhecer a stack qual framework/versão está rodando.
+  poweredByHeader: false,
   experimental: {
     serverActions: {
       // O upload de comprovante (Etapa 5) aceita até 8MB (MAX_PROOF_SIZE_BYTES
