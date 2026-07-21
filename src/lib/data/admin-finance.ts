@@ -1,8 +1,9 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma, PaymentStatus } from "@/generated/prisma/client";
 import { computeApprovedAmount, computeRemainingAmount } from "@/lib/payments";
+import { lastNMonthKeys, monthKeySaoPaulo, monthLabelPtBR } from "@/lib/date-bucket";
 
 export type FinancialOverview = {
   totalContratado: string;
@@ -106,4 +107,69 @@ export async function getFinancialOverview(): Promise<{
     },
     porCliente,
   };
+}
+
+export type MonthlyRevenuePoint = {
+  monthKey: string;
+  label: string;
+  total: string;
+};
+
+const MONTHLY_REVENUE_WINDOW = 6;
+
+// Recebido por mês (últimos 6 meses, mês corrente incluso) pro gráfico do
+// Financeiro. Agrupa por reviewedAt no fuso America/Sao_Paulo (ver
+// src/lib/date-bucket.ts) — só exibição, não entra em nenhum total ou
+// decisão de negócio.
+export async function getMonthlyRevenue(): Promise<MonthlyRevenuePoint[]> {
+  const payments = await prisma.payment.findMany({
+    where: { status: "APROVADO", reviewedAt: { not: null } },
+    select: { amount: true, reviewedAt: true },
+  });
+
+  const totalsByMonth = new Map<string, Prisma.Decimal>();
+  for (const payment of payments) {
+    const key = monthKeySaoPaulo(payment.reviewedAt!);
+    totalsByMonth.set(
+      key,
+      (totalsByMonth.get(key) ?? new Prisma.Decimal(0)).plus(payment.amount),
+    );
+  }
+
+  return lastNMonthKeys(MONTHLY_REVENUE_WINDOW).map((key) => ({
+    monthKey: key,
+    label: monthLabelPtBR(key),
+    total: (totalsByMonth.get(key) ?? new Prisma.Decimal(0)).toString(),
+  }));
+}
+
+export type PaymentStatusCount = {
+  status: PaymentStatus;
+  count: number;
+};
+
+// Distribuição de todos os pagamentos por status (contagem total, sem
+// recorte de período) pro gráfico do Financeiro.
+export async function getPaymentStatusBreakdown(): Promise<
+  PaymentStatusCount[]
+> {
+  const grouped = await prisma.payment.groupBy({
+    by: ["status"],
+    _count: { _all: true },
+  });
+
+  const countByStatus = new Map(
+    grouped.map((g) => [g.status, g._count._all]),
+  );
+
+  const order: PaymentStatus[] = [
+    "AGUARDANDO_VALIDACAO",
+    "APROVADO",
+    "REJEITADO",
+  ];
+
+  return order.map((status) => ({
+    status,
+    count: countByStatus.get(status) ?? 0,
+  }));
 }

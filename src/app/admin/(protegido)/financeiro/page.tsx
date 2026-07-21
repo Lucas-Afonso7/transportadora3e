@@ -1,14 +1,25 @@
 import { Inbox } from "lucide-react";
 import { requireAdminSession } from "@/lib/auth/session";
-import { getFinancialOverview } from "@/lib/data/admin-finance";
+import {
+  getFinancialOverview,
+  getMonthlyRevenue,
+  getPaymentStatusBreakdown,
+} from "@/lib/data/admin-finance";
 import { formatBRL } from "@/lib/format";
 import { FinanceiroPorClienteTable } from "@/components/admin/FinanceiroPorClienteTable";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { MonthlyRevenueChart } from "@/components/ui/charts/MonthlyRevenueChart";
+import { PaymentStatusChart } from "@/components/ui/charts/PaymentStatusChart";
 
 export default async function FinanceiroPage() {
   await requireAdminSession();
-  const { overview, porCliente } = await getFinancialOverview();
+  const [{ overview, porCliente }, monthlyRevenue, statusBreakdown] =
+    await Promise.all([
+      getFinancialOverview(),
+      getMonthlyRevenue(),
+      getPaymentStatusBreakdown(),
+    ]);
 
   return (
     <div>
@@ -52,6 +63,21 @@ export default async function FinanceiroPage() {
           <p className="font-mono text-xs text-info-tint-fg">
             {formatBRL(overview.servicosParciaisValor)}
           </p>
+        </Card>
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <Card className="lg:col-span-3">
+          <h2 className="font-display mb-4 text-base text-fg">
+            Recebido por mês
+          </h2>
+          <MonthlyRevenueChart data={monthlyRevenue} />
+        </Card>
+        <Card className="lg:col-span-2">
+          <h2 className="font-display mb-4 text-base text-fg">
+            Pagamentos por status
+          </h2>
+          <PaymentStatusChart data={statusBreakdown} />
         </Card>
       </div>
 
