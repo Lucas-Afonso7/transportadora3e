@@ -11,7 +11,6 @@ import { formatBRL } from "@/lib/format";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ServicesTable } from "@/components/dashboard/ServicesTable";
 import { Footer } from "@/components/painel/Footer";
-import { PushNotificationCard } from "@/components/painel/PushNotificationCard";
 
 const RECENT_LIMIT = 5;
 
@@ -49,8 +48,6 @@ export default async function PainelPage({
           Transportadora 3E.
         </p>
       </div>
-
-      <PushNotificationCard />
 
       {pagamento === "enviado" && (
         <p className="mb-6 rounded-control bg-brand-tint px-4 py-3 text-sm font-medium text-brand-tint-fg">

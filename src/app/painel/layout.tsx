@@ -5,6 +5,7 @@ import { PainelNav } from "@/components/painel/PainelNav";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { SettingsMenu } from "@/components/SettingsMenu";
 import { ClientNotificationWatcher } from "@/components/painel/ClientNotificationWatcher";
+import { PushOnboardingModal } from "@/components/painel/PushOnboardingModal";
 
 export default async function PainelLayout({
   children,
@@ -17,6 +18,7 @@ export default async function PainelLayout({
     <div className="min-h-screen bg-page">
       <AutoRefresh />
       <ClientNotificationWatcher />
+      <PushOnboardingModal />
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-page-x py-3">
           <div className="flex items-center gap-2">
@@ -35,7 +37,7 @@ export default async function PainelLayout({
             </div>
           </div>
 
-          <SettingsMenu logoutAction={clientLogoutAction} />
+          <SettingsMenu logoutAction={clientLogoutAction} showPushToggle />
         </div>
         <div className="mx-auto max-w-5xl px-page-x pb-3">
           <PainelNav />
