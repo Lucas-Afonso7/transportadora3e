@@ -102,6 +102,93 @@
   --color-info-tint-fg: #9db9cc;
 }
 
+/* ---------------------------------------------------------------------------
+   Paletas de marca — pra revenda white-label (mesmo código, deploy separado
+   por empresa/domínio/banco). Só a cor de marca muda por paleta; ink,
+   asfalto e as três cores de status (warning/danger/info) ficam fixas —
+   são semânticas, não de identidade visual, e um cliente reconhecendo
+   "amarelo = atenção" não deveria mudar de empresa pra empresa. Escolha vem
+   de NEXT_PUBLIC_PALETTE (ver layout.tsx), que vira o atributo data-palette
+   no <html>. brand-tint/brand-tint-fg do modo claro já herdam de
+   brand-100/700 automaticamente (ver :root acima) — só o modo escuro precisa
+   de override explícito abaixo, porque lá são valores fixos, não derivados.
+   --------------------------------------------------------------------------- */
+
+/* Azul profundo — petróleo/aço, não o azul "SaaS" saturado batido. */
+[data-palette="azul"] {
+  --color-brand-50: #eef3f7;
+  --color-brand-100: #d7e3ed;
+  --color-brand-200: #aec7db;
+  --color-brand-300: #82a8c5;
+  --color-brand-400: #5c89ab;
+  --color-brand-500: #35618c;
+  --color-brand-600: #2a4d70;
+  --color-brand-700: #223d59;
+  --color-brand-800: #1a2e43;
+  --color-brand-900: #12202f;
+}
+.dark[data-palette="azul"] {
+  --color-brand-tint: #1a2733;
+  --color-brand-tint-fg: #9dc2dd;
+}
+
+/* Verde-oliva escuro — terroso, longe do verde-menta/esmeralda genérico. */
+[data-palette="verde"] {
+  --color-brand-50: #f0f2e2;
+  --color-brand-100: #d9deba;
+  --color-brand-200: #b3bd8b;
+  --color-brand-300: #8b9857;
+  --color-brand-400: #6d7c3e;
+  --color-brand-500: #55622f;
+  --color-brand-600: #454f26;
+  --color-brand-700: #373e1e;
+  --color-brand-800: #2a2f17;
+  --color-brand-900: #1d2010;
+}
+.dark[data-palette="verde"] {
+  --color-brand-tint: #23280f;
+  --color-brand-tint-fg: #c3cd93;
+}
+
+/* Vinho/bordô — profundo e sóbrio, não vermelho de alerta nem "romântico". */
+[data-palette="vinho"] {
+  --color-brand-50: #f7ecef;
+  --color-brand-100: #edd2d9;
+  --color-brand-200: #d99daa;
+  --color-brand-300: #c06a7d;
+  --color-brand-400: #9c4257;
+  --color-brand-500: #7a2941;
+  --color-brand-600: #611f34;
+  --color-brand-700: #4a1728;
+  --color-brand-800: #34101c;
+  --color-brand-900: #200a11;
+}
+.dark[data-palette="vinho"] {
+  --color-brand-tint: #2c141c;
+  --color-brand-tint-fg: #e0a3b0;
+}
+
+/* Grafite âmbar — quase monocromático; o âmbar aparece só como acento
+   pontual (botão, RouteStatus), nunca como bloco de cor grande. Saturação
+   baixa de propósito, pra não colidir visualmente com o dourado vivo do
+   warning ("Sinaleira") — são tons parecidos, mas nunca a mesma cor. */
+[data-palette="grafite"] {
+  --color-brand-50: #f5f2ec;
+  --color-brand-100: #e6ddcd;
+  --color-brand-200: #cdbea0;
+  --color-brand-300: #b09d76;
+  --color-brand-400: #9c8763;
+  --color-brand-500: #8a7250;
+  --color-brand-600: #6f5b3f;
+  --color-brand-700: #574632;
+  --color-brand-800: #403425;
+  --color-brand-900: #2a2318;
+}
+.dark[data-palette="grafite"] {
+  --color-brand-tint: #302819;
+  --color-brand-tint-fg: #c9b593;
+}
+
 @theme inline {
   --color-ink-50: var(--color-ink-50);
   --color-ink-100: var(--color-ink-100);

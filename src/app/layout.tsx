@@ -31,6 +31,14 @@ export const metadata: Metadata = {
   description: "Gestão de pagamentos da Transportadora 3E",
 };
 
+// Qual paleta de marca essa instância usa (ver globals.css) — cada empresa
+// cliente do white-label define a sua própria em NEXT_PUBLIC_PALETTE na
+// hora de configurar o deploy (domínio e banco já são separados por
+// empresa; a paleta segue o mesmo modelo, sem precisar de tabela no banco
+// nem tela de configuração). "laranja" é a paleta original da Transportadora
+// 3E — fica como padrão pra nunca quebrar um deploy que não define a var.
+const PALETTE = process.env.NEXT_PUBLIC_PALETTE ?? "laranja";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -45,6 +53,7 @@ export default async function RootLayout({
   return (
     <html
       lang="pt-BR"
+      data-palette={PALETTE}
       className={`${oswald.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
       // O ThemeInitScript adiciona/remove "dark" nesse elemento antes do
       // React hidratar, de propósito (é o que evita o flash do tema
