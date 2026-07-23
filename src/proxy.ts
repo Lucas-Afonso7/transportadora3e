@@ -26,6 +26,11 @@ export function proxy(request: NextRequest) {
     "img-src 'self' data:",
     "font-src 'self'",
     "connect-src 'self'",
+    // Explícito (em vez de deixar cair no fallback de script-src) — com
+    // strict-dynamic em script-src, o fallback exigiria nonce/hash até
+    // pro registro do service worker (push notifications), que não tem
+    // como carregar um nonce (é só uma URL, não um <script> inline).
+    "worker-src 'self'",
     "object-src 'none'",
     "base-uri 'none'",
     "frame-ancestors 'none'",

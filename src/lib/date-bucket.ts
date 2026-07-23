@@ -11,6 +11,13 @@ const monthKeyFormatter = new Intl.DateTimeFormat("en-CA", {
   month: "2-digit",
 });
 
+const dayKeyFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: SAO_PAULO_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 // "AAAA-MM" no fuso de São Paulo — chave estável pra agrupar Payments por mês.
 export function monthKeySaoPaulo(date: Date): string {
   const parts = monthKeyFormatter.formatToParts(date);
@@ -58,4 +65,23 @@ export function lastNMonthKeys(n: number, now: Date = new Date()): string[] {
     );
   }
   return keys;
+}
+
+// "Hoje" (ou "hoje + N dias") como data de calendário em São Paulo,
+// devolvida já no formato que as colunas @db.Date usam (meia-noite UTC do
+// dia certo — mesma convenção de parseServiceDate em clientes/actions.ts).
+// Usado pelo lembrete de vencimento por push: rodar o cron perto da
+// meia-noite UTC sem isso jogaria "hoje" pro dia errado em São Paulo.
+export function saoPauloCalendarDateUTC(
+  daysFromNow = 0,
+  now: Date = new Date(),
+): Date {
+  const parts = dayKeyFormatter.formatToParts(now);
+  const year = Number(parts.find((p) => p.type === "year")!.value);
+  const month = Number(parts.find((p) => p.type === "month")!.value);
+  const day = Number(parts.find((p) => p.type === "day")!.value);
+
+  const date = new Date(Date.UTC(year, month - 1, day));
+  date.setUTCDate(date.getUTCDate() + daysFromNow);
+  return date;
 }

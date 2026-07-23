@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireAdminSession } from "@/lib/auth/session";
 import { approvePayment, rejectPayment } from "@/lib/actions/review-payment";
+import { notifyPaymentApproved } from "@/lib/push-server";
 
 // Sem isso, os links de navegação (sempre visíveis no cabeçalho, e por
 // isso sempre pré-carregados pelo Next) continuam mostrando a versão
@@ -32,6 +33,13 @@ export async function approvePaymentAction(formData: FormData) {
 
   if (outcome === "ja_revisado") redirect("/admin?erro=ja_revisado");
   if (outcome === "excede_total") redirect("/admin?erro=excede_total");
+
+  // Depois da transação confirmada, nunca dentro dela — ver comentário em
+  // notifyPaymentApproved. Falha no push não pode derrubar a aprovação.
+  await notifyPaymentApproved(paymentId).catch((error) => {
+    console.error("Falha ao notificar aprovação por push:", error);
+  });
+
   revalidateEverything();
   redirect("/admin?sucesso=aprovado");
 }

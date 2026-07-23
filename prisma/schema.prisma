@@ -26,11 +26,30 @@ model Client {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  services Service[]
-  payments Payment[]
-  sessions Session[]
+  services          Service[]
+  payments          Payment[]
+  sessions          Session[]
+  pushSubscriptions PushSubscription[]
 
   @@map("clients")
+}
+
+// Uma linha por dispositivo/navegador inscrito em push (um cliente pode ter
+// várias — celular e PC, por exemplo). endpoint já é o identificador único
+// de verdade (a própria API PushManager garante isso); p256dh/auth são as
+// chaves de criptografia que o web-push precisa pra cifrar o payload.
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  clientId  Int      @map("client_id")
+  endpoint  String   @unique @db.VarChar(500)
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  client Client @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@map("push_subscriptions")
 }
 
 model Admin {
@@ -98,6 +117,12 @@ model Service {
   serviceDate DateTime @map("service_date") @db.Date
   dueDate     DateTime? @map("due_date") @db.Date
   createdAt   DateTime @default(now()) @map("created_at")
+
+  // Marca quando cada lembrete de push já foi mandado, pra não avisar duas
+  // vezes o mesmo vencimento (o cron roda 1x/dia, mas se o serviço ainda
+  // bater no mesmo critério no dia seguinte por algum motivo, não reenviar).
+  notifiedThreeDaysAt DateTime? @map("notified_three_days_at")
+  notifiedDueDateAt   DateTime? @map("notified_due_date_at")
 
   client   Client    @relation(fields: [clientId], references: [id])
   payments Payment[]

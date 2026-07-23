@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { lastNMonthKeys, monthKeySaoPaulo, monthLabelPtBR } from "./date-bucket";
+import {
+  lastNMonthKeys,
+  monthKeySaoPaulo,
+  monthLabelPtBR,
+  saoPauloCalendarDateUTC,
+} from "./date-bucket";
 
 describe("monthKeySaoPaulo", () => {
   it("usa o mês de São Paulo, não o de UTC, perto da virada do mês", () => {
@@ -45,5 +50,36 @@ describe("lastNMonthKeys", () => {
     const now = new Date("2026-08-01T02:00:00.000Z");
     const keys = lastNMonthKeys(6, now);
     expect(keys[keys.length - 1]).toBe("2026-07");
+  });
+});
+
+describe("saoPauloCalendarDateUTC", () => {
+  it("usa o dia de São Paulo, não o de UTC, perto da virada do dia", () => {
+    // 2026-08-01 02:00 UTC = 2026-07-31 23:00 em São Paulo: "hoje" é 31/jul.
+    const nearMidnight = new Date("2026-08-01T02:00:00.000Z");
+    expect(saoPauloCalendarDateUTC(0, nearMidnight)).toEqual(
+      new Date("2026-07-31T00:00:00.000Z"),
+    );
+  });
+
+  it("soma dias a partir do dia de São Paulo (não de UTC)", () => {
+    const nearMidnight = new Date("2026-08-01T02:00:00.000Z"); // 31/jul em SP
+    expect(saoPauloCalendarDateUTC(3, nearMidnight)).toEqual(
+      new Date("2026-08-03T00:00:00.000Z"),
+    );
+  });
+
+  it("bate com a data quando o dia já é o mesmo em UTC e em São Paulo", () => {
+    const midMorning = new Date("2026-08-01T15:00:00.000Z");
+    expect(saoPauloCalendarDateUTC(0, midMorning)).toEqual(
+      new Date("2026-08-01T00:00:00.000Z"),
+    );
+  });
+
+  it("cruza virada de mês corretamente ao somar dias", () => {
+    const lastDayOfMonth = new Date("2026-01-30T15:00:00.000Z"); // 30/jan em SP
+    expect(saoPauloCalendarDateUTC(3, lastDayOfMonth)).toEqual(
+      new Date("2026-02-02T00:00:00.000Z"),
+    );
   });
 });
