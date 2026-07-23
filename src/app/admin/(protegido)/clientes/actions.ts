@@ -77,8 +77,20 @@ export async function createClientAction(
 
   const { docNumber, name, phone } = parsed.data;
 
-  if (!isValidDocNumberFormat(docNumber)) {
+  // docNumber já vem só com dígitos (transform acima). Duas mensagens
+  // diferentes de propósito: "tamanho errado" (11/14 dígitos) é um erro
+  // bem diferente de "dígito verificador não fecha" (CPF/CNPJ com o
+  // tamanho certo, mas inventado ou digitado errado) — a mensagem antiga
+  // dizia sempre "deve ter 11 ou 14 dígitos" pros dois casos, o que confundia
+  // quem já tinha digitado a quantidade certa de números.
+  if (docNumber.length !== 11 && docNumber.length !== 14) {
     return { error: "CPF/CNPJ deve ter 11 ou 14 dígitos.", created: null };
+  }
+  if (!isValidDocNumberFormat(docNumber)) {
+    return {
+      error: "CPF/CNPJ inválido — confira os números digitados.",
+      created: null,
+    };
   }
 
   let email: string | null = null;
