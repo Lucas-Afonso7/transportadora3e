@@ -355,3 +355,49 @@ export async function updateServiceAction(formData: FormData) {
   revalidateEverything();
   redirect(`/admin/clientes/${service.clientId}?sucesso=servico_atualizado`);
 }
+
+export type DeleteServiceResult = { ok: boolean; error: string | null };
+
+// Chamada direto de um Client Component (DeleteServiceButton), não por
+// <form action>: sem redirect de propósito, pra quem chama decidir o que
+// fazer (aqui, um router.refresh() em vez de navegar) — "sem recarregar a
+// página" só funciona assim.
+//
+// Bloqueia a exclusão se o serviço já tem QUALQUER pagamento (aprovado,
+// rejeitado ou aguardando validação): um pagamento rejeitado ainda é
+// histórico real (o cliente enviou, o admin recusou, tem AuditLog
+// apontando pra ele), e um aprovado é dinheiro que já entrou — excluir o
+// serviço apagaria esse rastro financeiro/de auditoria. Pra frete sem
+// nenhum pagamento (o caso normal de "cadastrei errado, quero desfazer"),
+// a exclusão é direta.
+export async function deleteServiceAction(
+  serviceId: number,
+): Promise<DeleteServiceResult> {
+  await requireAdminSession();
+
+  if (!Number.isInteger(serviceId) || serviceId <= 0) {
+    return { ok: false, error: "Serviço inválido." };
+  }
+
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId },
+    select: { id: true, payments: { select: { id: true } } },
+  });
+
+  if (!service) {
+    return { ok: false, error: "Serviço não encontrado." };
+  }
+
+  if (service.payments.length > 0) {
+    return {
+      ok: false,
+      error:
+        "Não é possível excluir: esse frete já tem pagamento registrado (aprovado, rejeitado ou aguardando validação).",
+    };
+  }
+
+  await prisma.service.delete({ where: { id: serviceId } });
+
+  revalidateEverything();
+  return { ok: true, error: null };
+}

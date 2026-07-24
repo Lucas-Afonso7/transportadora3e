@@ -3,6 +3,7 @@ import type { ClientServiceSummary } from "@/lib/data/client-dashboard";
 import { ServiceStatusBadge } from "@/components/dashboard/StatusBadge";
 import { updateServiceAction } from "@/app/admin/(protegido)/clientes/actions";
 import { Card } from "@/components/ui/Card";
+import { DeleteServiceButton } from "@/components/admin/DeleteServiceButton";
 
 function toDateInputValue(date: Date | null): string {
   if (!date) return "";
@@ -20,11 +21,14 @@ export function ServiceRow({ service }: { service: ClientServiceSummary }) {
             {service.dueDate && ` · vence em ${formatDate(service.dueDate)}`}
           </p>
         </div>
-        <ServiceStatusBadge
-          status={service.status}
-          paidAmount={service.paidAmount}
-          totalAmount={service.totalAmount}
-        />
+        <div className="flex items-center gap-2">
+          <ServiceStatusBadge
+            status={service.status}
+            paidAmount={service.paidAmount}
+            totalAmount={service.totalAmount}
+          />
+          <DeleteServiceButton serviceId={service.id} />
+        </div>
       </div>
 
       <div className="mt-3 grid grid-cols-3 gap-2 border-t border-border-muted pt-3 text-sm">
