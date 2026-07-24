@@ -7,6 +7,11 @@ import {
   getClientServiceSummaries,
   type ClientServiceSummary,
 } from "@/lib/data/client-dashboard";
+import {
+  lastNMonthKeys,
+  monthKeySaoPaulo,
+  monthLabelPtBR,
+} from "@/lib/date-bucket";
 
 export type AdminClientSummary = {
   id: number;
@@ -104,4 +109,73 @@ export async function getClientDetail(
     email: client.email,
     services,
   };
+}
+
+export type ClientMonthlyPoint = {
+  monthKey: string;
+  label: string;
+  contratado: string;
+  pago: string;
+  devido: string;
+};
+
+const CLIENT_MONTHLY_WINDOW = 6;
+
+// Pura (sem query própria) — recebe os services que getClientDetail já
+// buscou. Agrupa por serviceDate no fuso America/Sao_Paulo (mesma regra
+// de fuso das Etapas anteriores) formando "coortes por mês de contratação":
+// de tudo que foi contratado naquele mês, quanto já foi pago e quanto
+// ainda está em aberto — por construção, devido = contratado - pago,
+// sempre bate.
+export function getClientMonthlyBreakdown(
+  services: ClientServiceSummary[],
+): ClientMonthlyPoint[] {
+  const zero = new Prisma.Decimal(0);
+  const buckets = new Map<
+    string,
+    { contratado: Prisma.Decimal; pago: Prisma.Decimal; devido: Prisma.Decimal }
+  >();
+
+  for (const service of services) {
+    const key = monthKeySaoPaulo(service.serviceDate);
+    const bucket = buckets.get(key) ?? {
+      contratado: zero,
+      pago: zero,
+      devido: zero,
+    };
+    bucket.contratado = bucket.contratado.plus(service.totalAmount);
+    bucket.pago = bucket.pago.plus(service.paidAmount);
+    bucket.devido = bucket.devido.plus(service.remainingAmount);
+    buckets.set(key, bucket);
+  }
+
+  return lastNMonthKeys(CLIENT_MONTHLY_WINDOW).map((key) => {
+    const bucket = buckets.get(key);
+    return {
+      monthKey: key,
+      label: monthLabelPtBR(key),
+      contratado: (bucket?.contratado ?? zero).toString(),
+      pago: (bucket?.pago ?? zero).toString(),
+      devido: (bucket?.devido ?? zero).toString(),
+    };
+  });
+}
+
+export type ClientLoginHistoryItem = {
+  id: number;
+  createdAt: Date;
+  ipAddress: string | null;
+};
+
+const LOGIN_HISTORY_LIMIT = 15;
+
+export async function getClientLoginHistory(
+  clientId: number,
+): Promise<ClientLoginHistoryItem[]> {
+  return prisma.clientLoginEvent.findMany({
+    where: { clientId },
+    orderBy: { createdAt: "desc" },
+    take: LOGIN_HISTORY_LIMIT,
+    select: { id: true, createdAt: true, ipAddress: true },
+  });
 }

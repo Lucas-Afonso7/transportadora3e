@@ -30,8 +30,25 @@ model Client {
   payments          Payment[]
   sessions          Session[]
   pushSubscriptions PushSubscription[]
+  loginEvents       ClientLoginEvent[]
 
   @@map("clients")
+}
+
+// Histórico de acessos do cliente, mostrado no admin (ficha do cliente).
+// Diferente de Session (que é apagada quando expira — só serve pra
+// autenticação em si), essa tabela nunca é limpa: é o registro histórico
+// de "quando esse cliente entrou", não uma credencial ativa.
+model ClientLoginEvent {
+  id        Int      @id @default(autoincrement())
+  clientId  Int      @map("client_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  ipAddress String?  @map("ip_address")
+
+  client Client @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@map("client_login_events")
 }
 
 // Uma linha por dispositivo/navegador inscrito em push (um cliente pode ter

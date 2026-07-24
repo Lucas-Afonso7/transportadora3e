@@ -104,6 +104,13 @@ export async function clientLoginAction(
     data: { failedLoginAttempts: 0, lockedUntil: null },
   });
 
+  // Histórico de acessos (mostrado no admin) — nunca é limpo, diferente da
+  // Session, que expira. Falha aqui (ex.: soluço no banco) não pode
+  // impedir o login em si, então nunca derruba o fluxo.
+  await prisma.clientLoginEvent
+    .create({ data: { clientId: client.id, ipAddress: ip } })
+    .catch(() => {});
+
   await createClientSession(client.id);
   redirect("/painel");
 }
