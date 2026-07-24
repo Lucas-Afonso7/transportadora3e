@@ -4,6 +4,7 @@ import { requireAdminSession } from "@/lib/auth/session";
 import {
   getClientDetail,
   getClientMonthlyBreakdown,
+  getClientDailyBreakdown,
   getClientLoginHistory,
 } from "@/lib/data/admin-clients";
 import { summarizeClientTotals } from "@/lib/data/client-dashboard";
@@ -53,6 +54,7 @@ export default async function ClienteDetailPage({
 
   const totals = summarizeClientTotals(client.services);
   const monthly = getClientMonthlyBreakdown(client.services);
+  const dailyTotals = getClientDailyBreakdown(client.services);
   const loginHistory = await getClientLoginHistory(clientId);
 
   return (
@@ -112,7 +114,7 @@ export default async function ClienteDetailPage({
         <h2 className="font-display mb-4 text-base text-fg">
           Evolução mensal
         </h2>
-        <ClientMonthlyChart data={monthly} />
+        <ClientMonthlyChart data={monthly} dailyTotals={dailyTotals} />
       </Card>
 
       {/* Dados cadastrais, acesso e histórico — recolhidos por padrão (só o

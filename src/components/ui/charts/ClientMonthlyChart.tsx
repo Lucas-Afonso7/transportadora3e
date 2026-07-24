@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { formatBRL } from "@/lib/format";
+import { DayCalendarModal } from "./DayCalendarModal";
 
 export type ClientMonthlyPoint = {
   monthKey: string;
@@ -16,7 +20,19 @@ const COLUMN_WIDTH_PX = 128;
 // (warning) — mesmas cores dos cards de resumo da própria página, pra ficar
 // óbvio qual barra é qual sem precisar decorar uma legenda nova. Valor
 // exato sempre em texto, nunca só a barra.
-export function ClientMonthlyChart({ data }: { data: ClientMonthlyPoint[] }) {
+//
+// Clicar na coluna de um mês abre o calendário daquele mês (DayCalendarModal)
+// com o valor por dia — dailyTotals vem pronto da página (getClientDailyBreakdown),
+// sem chamada de rede extra: o clique só decide qual mês mostrar.
+export function ClientMonthlyChart({
+  data,
+  dailyTotals,
+}: {
+  data: ClientMonthlyPoint[];
+  dailyTotals: Record<string, Record<number, string>>;
+}) {
+  const [openMonthKey, setOpenMonthKey] = useState<string | null>(null);
+
   const max = Math.max(
     1,
     ...data.flatMap((point) => [
@@ -25,6 +41,8 @@ export function ClientMonthlyChart({ data }: { data: ClientMonthlyPoint[] }) {
       Number(point.devido),
     ]),
   );
+
+  const openPoint = data.find((point) => point.monthKey === openMonthKey);
 
   return (
     <div>
@@ -41,9 +59,12 @@ export function ClientMonthlyChart({ data }: { data: ClientMonthlyPoint[] }) {
             ];
 
             return (
-              <div
+              <button
                 key={point.monthKey}
-                className="flex flex-col items-center gap-2 rounded-control border border-border-muted p-2"
+                type="button"
+                onClick={() => setOpenMonthKey(point.monthKey)}
+                title={`Ver dias de ${point.label}`}
+                className="flex flex-col items-center gap-2 rounded-control border border-border-muted p-2 text-left transition-colors hover:border-brand-500 hover:bg-surface-hover"
                 style={{ minWidth: COLUMN_WIDTH_PX - 12 }}
               >
                 <div
@@ -82,14 +103,24 @@ export function ClientMonthlyChart({ data }: { data: ClientMonthlyPoint[] }) {
                     <span>{formatBRL(point.devido)}</span>
                   </p>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
       </div>
-      <p className="mt-1.5 text-xs text-fg-subtle sm:hidden">
-        Arraste para o lado para ver mais →
+      <p className="mt-1.5 text-xs text-fg-subtle">
+        Clique num mês para ver o valor por dia.{" "}
+        <span className="sm:hidden">Arraste para o lado para ver mais →</span>
       </p>
+
+      {openPoint && (
+        <DayCalendarModal
+          monthKey={openPoint.monthKey}
+          monthLabel={openPoint.label}
+          dailyTotals={dailyTotals[openPoint.monthKey] ?? {}}
+          onClose={() => setOpenMonthKey(null)}
+        />
+      )}
     </div>
   );
 }

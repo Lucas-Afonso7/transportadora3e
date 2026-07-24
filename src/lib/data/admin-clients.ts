@@ -7,11 +7,7 @@ import {
   getClientServiceSummaries,
   type ClientServiceSummary,
 } from "@/lib/data/client-dashboard";
-import {
-  lastNMonthKeys,
-  monthKeySaoPaulo,
-  monthLabelPtBR,
-} from "@/lib/date-bucket";
+import { lastNMonthKeys, monthKeyUTC, monthLabelPtBR } from "@/lib/date-bucket";
 
 export type AdminClientSummary = {
   id: number;
@@ -122,11 +118,11 @@ export type ClientMonthlyPoint = {
 const CLIENT_MONTHLY_WINDOW = 6;
 
 // Pura (sem query própria) — recebe os services que getClientDetail já
-// buscou. Agrupa por serviceDate no fuso America/Sao_Paulo (mesma regra
-// de fuso das Etapas anteriores) formando "coortes por mês de contratação":
-// de tudo que foi contratado naquele mês, quanto já foi pago e quanto
-// ainda está em aberto — por construção, devido = contratado - pago,
-// sempre bate.
+// buscou. Agrupa por serviceDate em UTC (é coluna @db.Date — meia-noite UTC
+// representa só a data em si, não um instante; ver monthKeyUTC) formando
+// "coortes por mês de contratação": de tudo que foi contratado naquele mês,
+// quanto já foi pago e quanto ainda está em aberto — por construção,
+// devido = contratado - pago, sempre bate.
 export function getClientMonthlyBreakdown(
   services: ClientServiceSummary[],
 ): ClientMonthlyPoint[] {
@@ -137,7 +133,7 @@ export function getClientMonthlyBreakdown(
   >();
 
   for (const service of services) {
-    const key = monthKeySaoPaulo(service.serviceDate);
+    const key = monthKeyUTC(service.serviceDate);
     const bucket = buckets.get(key) ?? {
       contratado: zero,
       pago: zero,
@@ -159,6 +155,38 @@ export function getClientMonthlyBreakdown(
       devido: (bucket?.devido ?? zero).toString(),
     };
   });
+}
+
+// monthKey ("AAAA-MM") -> dia do mês -> soma de totalAmount naquele dia.
+// Só dias com frete de verdade entram no mapa (dias sem nada simplesmente
+// não aparecem) — quem consome decide o que mostrar pra um dia ausente.
+export type ClientDailyTotals = Record<string, Record<number, string>>;
+
+// Pura, mesma ideia de getClientMonthlyBreakdown: recebe os services que a
+// página já carregou, sem query própria. Alimenta o calendário de detalhe
+// que abre ao clicar numa barra do gráfico mensal.
+export function getClientDailyBreakdown(
+  services: ClientServiceSummary[],
+): ClientDailyTotals {
+  const zero = new Prisma.Decimal(0);
+  const byMonth = new Map<string, Map<number, Prisma.Decimal>>();
+
+  for (const service of services) {
+    const monthKey = monthKeyUTC(service.serviceDate);
+    const day = service.serviceDate.getUTCDate();
+    const monthMap = byMonth.get(monthKey) ?? new Map<number, Prisma.Decimal>();
+    monthMap.set(day, (monthMap.get(day) ?? zero).plus(service.totalAmount));
+    byMonth.set(monthKey, monthMap);
+  }
+
+  const result: ClientDailyTotals = {};
+  for (const [monthKey, monthMap] of byMonth) {
+    result[monthKey] = {};
+    for (const [day, total] of monthMap) {
+      result[monthKey][day] = total.toString();
+    }
+  }
+  return result;
 }
 
 export type ClientLoginHistoryItem = {

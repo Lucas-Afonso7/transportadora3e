@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   lastNMonthKeys,
   monthKeySaoPaulo,
+  monthKeyUTC,
   monthLabelPtBR,
   saoPauloCalendarDateUTC,
 } from "./date-bucket";
@@ -81,5 +82,20 @@ describe("saoPauloCalendarDateUTC", () => {
     expect(saoPauloCalendarDateUTC(3, lastDayOfMonth)).toEqual(
       new Date("2026-02-02T00:00:00.000Z"),
     );
+  });
+});
+
+describe("monthKeyUTC", () => {
+  it("lê o mês direto em UTC, sem converter fuso — dia 1 fica em UTC, não 'volta' pro mês anterior", () => {
+    // new Date("2026-07-01") vira meia-noite UTC do dia 1 (convenção das
+    // colunas @db.Date — ver parseServiceDate em clientes/actions.ts).
+    // Se isso fosse lido com monthKeySaoPaulo, viraria 30/jun em São Paulo.
+    const serviceDate = new Date("2026-07-01T00:00:00.000Z");
+    expect(monthKeyUTC(serviceDate)).toBe("2026-07");
+  });
+
+  it("bate com monthKeySaoPaulo longe da virada do mês (só documentando a diferença de uso)", () => {
+    const midMonth = new Date("2026-07-15T00:00:00.000Z");
+    expect(monthKeyUTC(midMonth)).toBe("2026-07");
   });
 });

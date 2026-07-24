@@ -26,6 +26,17 @@ export function monthKeySaoPaulo(date: Date): string {
   return `${year}-${month}`;
 }
 
+// "AAAA-MM" em UTC — pra colunas @db.Date (Service.serviceDate/dueDate), que
+// o Prisma sempre devolve à meia-noite UTC representando só a data em si,
+// sem hora de verdade (mesma observação de formatDate em format.ts). Ler
+// essas colunas com monthKeySaoPaulo (acima) jogaria a data um dia pra
+// trás: meia-noite UTC do dia 1 é 21h do dia 30 em São Paulo — dia 1
+// cairia no mês anterior. monthKeySaoPaulo continua certo pra DateTime de
+// verdade (Payment.reviewedAt); esta função é só pra data pura.
+export function monthKeyUTC(date: Date): string {
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
 const MONTH_ABBREV_PT_BR = [
   "jan",
   "fev",
