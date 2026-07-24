@@ -26,6 +26,17 @@ export function monthKeySaoPaulo(date: Date): string {
   return `${year}-${month}`;
 }
 
+// Dia do mês (1-31) no fuso de São Paulo — só pra DateTime de verdade
+// (Payment.reviewedAt), o mesmo tipo de campo que monthKeySaoPaulo acima já
+// usa. NUNCA usar isso pra coluna @db.Date (serviceDate/dueDate) — pra essas,
+// use monthKeyUTC + date.getUTCDate() direto (ver comentário logo abaixo:
+// meia-noite UTC de um @db.Date não é um instante real, converter de fuso
+// joga a data um dia pra trás).
+export function dayOfMonthSaoPaulo(date: Date): number {
+  const parts = dayKeyFormatter.formatToParts(date);
+  return Number(parts.find((p) => p.type === "day")!.value);
+}
+
 // "AAAA-MM" em UTC — pra colunas @db.Date (Service.serviceDate/dueDate), que
 // o Prisma sempre devolve à meia-noite UTC representando só a data em si,
 // sem hora de verdade (mesma observação de formatDate em format.ts). Ler

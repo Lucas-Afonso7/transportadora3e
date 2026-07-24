@@ -3,6 +3,7 @@ import { requireAdminSession } from "@/lib/auth/session";
 import {
   getFinancialOverview,
   getMonthlyRevenue,
+  getDailyRevenueBreakdown,
   getPaymentStatusBreakdown,
 } from "@/lib/data/admin-finance";
 import { formatBRL } from "@/lib/format";
@@ -14,10 +15,11 @@ import { PaymentStatusChart } from "@/components/ui/charts/PaymentStatusChart";
 
 export default async function FinanceiroPage() {
   await requireAdminSession();
-  const [{ overview, porCliente }, monthlyRevenue, statusBreakdown] =
+  const [{ overview, porCliente }, monthlyRevenue, dailyRevenue, statusBreakdown] =
     await Promise.all([
       getFinancialOverview(),
       getMonthlyRevenue(),
+      getDailyRevenueBreakdown(),
       getPaymentStatusBreakdown(),
     ]);
 
@@ -71,7 +73,7 @@ export default async function FinanceiroPage() {
           <h2 className="font-display mb-4 text-base text-fg">
             Recebido por mês
           </h2>
-          <MonthlyRevenueChart data={monthlyRevenue} />
+          <MonthlyRevenueChart data={monthlyRevenue} dailyTotals={dailyRevenue} />
         </Card>
         <Card className="lg:col-span-2">
           <h2 className="font-display mb-4 text-base text-fg">

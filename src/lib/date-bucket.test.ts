@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  dayOfMonthSaoPaulo,
   lastNMonthKeys,
   monthKeySaoPaulo,
   monthKeyUTC,
@@ -82,6 +83,20 @@ describe("saoPauloCalendarDateUTC", () => {
     expect(saoPauloCalendarDateUTC(3, lastDayOfMonth)).toEqual(
       new Date("2026-02-02T00:00:00.000Z"),
     );
+  });
+});
+
+describe("dayOfMonthSaoPaulo", () => {
+  it("usa o dia de São Paulo, não o de UTC, perto da virada do dia", () => {
+    // 2026-07-15 02:00 UTC = 2026-07-14 23:00 em São Paulo: dia 14, não 15.
+    // Cenário real: Payment.reviewedAt (DateTime de verdade), não @db.Date.
+    const nearMidnight = new Date("2026-07-15T02:00:00.000Z");
+    expect(dayOfMonthSaoPaulo(nearMidnight)).toBe(14);
+  });
+
+  it("bate com o dia quando UTC e São Paulo já concordam", () => {
+    const midMorning = new Date("2026-07-15T15:00:00.000Z");
+    expect(dayOfMonthSaoPaulo(midMorning)).toBe(15);
   });
 });
 

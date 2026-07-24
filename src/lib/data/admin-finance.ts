@@ -3,7 +3,12 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { Prisma, PaymentStatus } from "@/generated/prisma/client";
 import { computeApprovedAmount, computeRemainingAmount } from "@/lib/payments";
-import { lastNMonthKeys, monthKeySaoPaulo, monthLabelPtBR } from "@/lib/date-bucket";
+import {
+  dayOfMonthSaoPaulo,
+  lastNMonthKeys,
+  monthKeySaoPaulo,
+  monthLabelPtBR,
+} from "@/lib/date-bucket";
 
 export type FinancialOverview = {
   totalContratado: string;
@@ -141,6 +146,41 @@ export async function getMonthlyRevenue(): Promise<MonthlyRevenuePoint[]> {
     label: monthLabelPtBR(key),
     total: (totalsByMonth.get(key) ?? new Prisma.Decimal(0)).toString(),
   }));
+}
+
+// monthKey ("AAAA-MM") -> dia do mês -> soma de Payment.amount recebido
+// naquele dia (só APROVADO). Mesma métrica de getMonthlyRevenue, só que por
+// dia em vez de por mês — alimenta o calendário de detalhe ao clicar numa
+// barra do gráfico "Recebido por mês". reviewedAt é DateTime de verdade
+// (não @db.Date), então dayOfMonthSaoPaulo é o helper certo aqui.
+export async function getDailyRevenueBreakdown(): Promise<
+  Record<string, Record<number, string>>
+> {
+  const payments = await prisma.payment.findMany({
+    where: { status: "APROVADO", reviewedAt: { not: null } },
+    select: { amount: true, reviewedAt: true },
+  });
+
+  const byMonth = new Map<string, Map<number, Prisma.Decimal>>();
+  for (const payment of payments) {
+    const monthKey = monthKeySaoPaulo(payment.reviewedAt!);
+    const day = dayOfMonthSaoPaulo(payment.reviewedAt!);
+    const monthMap = byMonth.get(monthKey) ?? new Map<number, Prisma.Decimal>();
+    monthMap.set(
+      day,
+      (monthMap.get(day) ?? new Prisma.Decimal(0)).plus(payment.amount),
+    );
+    byMonth.set(monthKey, monthMap);
+  }
+
+  const result: Record<string, Record<number, string>> = {};
+  for (const [monthKey, monthMap] of byMonth) {
+    result[monthKey] = {};
+    for (const [day, total] of monthMap) {
+      result[monthKey][day] = total.toString();
+    }
+  }
+  return result;
 }
 
 export type PaymentStatusCount = {
