@@ -6,33 +6,57 @@ import { SearchX } from "lucide-react";
 import { formatBRL } from "@/lib/format";
 import { matchesDigits, matchesText } from "@/lib/search-match";
 import { SearchInput } from "./SearchInput";
+import { SortSelect, type SortOption } from "./SortSelect";
 import { Table } from "@/components/ui/Table";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { AdminClientSummary } from "@/lib/data/admin-clients";
+import { sortClients, type ClientSortKey } from "@/lib/sort-clients";
+
+const SORT_OPTIONS: SortOption<ClientSortKey>[] = [
+  { value: "name-asc", label: "Nome (A-Z)" },
+  { value: "name-desc", label: "Nome (Z-A)" },
+  { value: "contratado-desc", label: "Contratado (maior-menor)" },
+  { value: "contratado-asc", label: "Contratado (menor-maior)" },
+  { value: "pendente-desc", label: "Em aberto (maior-menor)" },
+  { value: "pendente-asc", label: "Em aberto (menor-maior)" },
+  { value: "date-desc", label: "Cadastro mais recente" },
+  { value: "date-asc", label: "Cadastro mais antigo" },
+];
 
 export function ClientesTable({ clients }: { clients: AdminClientSummary[] }) {
   const [query, setQuery] = useState("");
+  const [sortKey, setSortKey] = useState<ClientSortKey>("name-asc");
 
+  // Filtra primeiro, ordena o resultado depois — os dois em memória, sem
+  // ida ao servidor, então a lista reordena/refiltra na hora (useMemo só
+  // recalcula quando query/sortKey/clients mudam).
   const filtered = useMemo(() => {
     const trimmed = query.trim();
-    if (!trimmed) return clients;
+    const base = trimmed
+      ? clients.filter(
+          (client) =>
+            matchesText(client.name, trimmed) ||
+            matchesDigits(client.docNumber, trimmed) ||
+            matchesDigits(client.phone, trimmed),
+        )
+      : clients;
 
-    return clients.filter(
-      (client) =>
-        matchesText(client.name, trimmed) ||
-        matchesDigits(client.docNumber, trimmed) ||
-        matchesDigits(client.phone, trimmed),
-    );
-  }, [clients, query]);
+    return sortClients(base, sortKey);
+  }, [clients, query, sortKey]);
 
   return (
     <div>
-      <div className="mb-4 max-w-sm">
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          placeholder="Buscar por nome, CPF/CNPJ ou telefone..."
-        />
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="max-w-sm flex-1">
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Buscar por nome, CPF/CNPJ ou telefone..."
+          />
+        </div>
+        <div className="sm:w-56">
+          <SortSelect value={sortKey} onChange={setSortKey} options={SORT_OPTIONS} />
+        </div>
       </div>
 
       {filtered.length === 0 ? (
